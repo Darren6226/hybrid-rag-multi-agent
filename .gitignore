@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 环境
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OMC 工具目录
+.omc/
+.claude/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 评估结果（运行时生成）
+evaluation_results/
+llm_evaluation_results/

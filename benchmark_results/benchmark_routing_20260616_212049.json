@@ -1,0 +1,227 @@
+{
+  "experiment": "routing",
+  "total_questions": 25,
+  "correct": 0,
+  "accuracy": 0.0,
+  "avg_rounds": 0.0,
+  "worker_stats": {
+    "sqler": {
+      "total": 6,
+      "correct": 0
+    },
+    "graph_kg": {
+      "total": 7,
+      "correct": 0
+    },
+    "vec_kg": {
+      "total": 6,
+      "correct": 0
+    },
+    "chat": {
+      "total": 6,
+      "correct": 0
+    }
+  },
+  "details": [
+    {
+      "question": "查询小米科技的总销售额",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-31c812f1-e799-90a1-ada0-97ca2240b524', 'request_id': '31c812f1-e799-90a1-ada0-97ca2240b524'}"
+    },
+    {
+      "question": "哪些客户购买了华为的产品",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-424e3049-66af-9fa3-b961-80a366382e15', 'request_id': '424e3049-66af-9fa3-b961-80a366382e15'}"
+    },
+    {
+      "question": "2024年三星的销售额是多少",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-bc0bf2cf-f4b7-9faf-afdd-4034982e46f0', 'request_id': 'bc0bf2cf-f4b7-9faf-afdd-4034982e46f0'}"
+    },
+    {
+      "question": "比亚迪的销量排名",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-03614705-cc74-9bd9-adc8-533ae5138a08', 'request_id': '03614705-cc74-9bd9-adc8-533ae5138a08'}"
+    },
+    {
+      "question": "查询所有公司的利润率",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-36368ca5-7841-9547-96fd-91ef351d63b0', 'request_id': '36368ca5-7841-9547-96fd-91ef351d63b0'}"
+    },
+    {
+      "question": "小米有哪些技术",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-f6afdc33-b0b1-935f-b3a6-601d70a0e062', 'request_id': 'f6afdc33-b0b1-935f-b3a6-601d70a0e062'}"
+    },
+    {
+      "question": "华为的合作伙伴有哪些",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-7309ece4-7d63-9c53-90f5-6af8d7ab07f1', 'request_id': '7309ece4-7d63-9c53-90f5-6af8d7ab07f1'}"
+    },
+    {
+      "question": "苹果在哪些地区有业务",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-5ff64fa2-a40b-9bc2-bd6f-08f10c50446d', 'request_id': '5ff64fa2-a40b-9bc2-bd6f-08f10c50446d'}"
+    },
+    {
+      "question": "小米和华为有什么合作",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-9c260891-1853-95f2-a21c-bdb65cee4427', 'request_id': '9c260891-1853-95f2-a21c-bdb65cee4427'}"
+    },
+    {
+      "question": "三星的产品有哪些",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-69fc583f-8269-9991-9cfd-c0fc95d83321', 'request_id': '69fc583f-8269-9991-9cfd-c0fc95d83321'}"
+    },
+    {
+      "question": "什么是深度学习",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-d66f037d-bdc5-9e91-b254-9fe9c26e2d78', 'request_id': 'd66f037d-bdc5-9e91-b254-9fe9c26e2d78'}"
+    },
+    {
+      "question": "Transformer架构的原理是什么",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-f7af5cda-ec57-9cba-bba3-10834f706886', 'request_id': 'f7af5cda-ec57-9cba-bba3-10834f706886'}"
+    },
+    {
+      "question": "RAG系统有哪些优化方法",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-13c45a39-f46b-98ac-a2e7-bb29c732370b', 'request_id': '13c45a39-f46b-98ac-a2e7-bb29c732370b'}"
+    },
+    {
+      "question": "向量数据库的工作原理",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-08946040-4c32-9b15-a214-2bcb9cf35573', 'request_id': '08946040-4c32-9b15-a214-2bcb9cf35573'}"
+    },
+    {
+      "question": "什么是语义分块",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-d73452e0-708c-9e32-a540-49e7554fd415', 'request_id': 'd73452e0-708c-9e32-a540-49e7554fd415'}"
+    },
+    {
+      "question": "你好",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-08eb102b-f1ea-9940-bb7a-e3c96f1aa205', 'request_id': '08eb102b-f1ea-9940-bb7a-e3c96f1aa205'}"
+    },
+    {
+      "question": "请总结一下前面的对话",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-4da9735f-7d57-9048-879d-c89669017b52', 'request_id': '4da9735f-7d57-9048-879d-c89669017b52'}"
+    },
+    {
+      "question": "谢谢你的帮助",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-65f6a5b8-131f-9d20-a62a-bedce284adb9', 'request_id': '65f6a5b8-131f-9d20-a62a-bedce284adb9'}"
+    },
+    {
+      "question": "再见",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-8fdaeb48-81d6-95b5-8e2a-8eb97a6af768', 'request_id': '8fdaeb48-81d6-95b5-8e2a-8eb97a6af768'}"
+    },
+    {
+      "question": "你能做什么",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-157ff396-696c-95c8-aeba-baefebb12958', 'request_id': '157ff396-696c-95c8-aeba-baefebb12958'}"
+    },
+    {
+      "question": "小米的快充技术和华为的5G技术哪个更厉害",
+      "expected": "sqler",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-d5bb94ad-dafc-9ba8-b855-38b199ca84e5', 'request_id': 'd5bb94ad-dafc-9ba8-b855-38b199ca84e5'}"
+    },
+    {
+      "question": "对比苹果和三星的AI战略",
+      "expected": "vec_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-3608addd-a886-9d3f-98a7-642b9b1e4dda', 'request_id': '3608addd-a886-9d3f-98a7-642b9b1e4dda'}"
+    },
+    {
+      "question": "比亚迪的合作伙伴在哪些地区",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-0f897ad5-42df-9e25-b5aa-c83d079b0730', 'request_id': '0f897ad5-42df-9e25-b5aa-c83d079b0730'}"
+    },
+    {
+      "question": "总结一下小米的技术创新",
+      "expected": "chat",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-453ba4a1-f0e7-96ee-948a-113c3178ea58', 'request_id': '453ba4a1-f0e7-96ee-948a-113c3178ea58'}"
+    },
+    {
+      "question": "华为的5G技术用了什么芯片",
+      "expected": "graph_kg",
+      "got": null,
+      "correct": false,
+      "rounds": 0,
+      "error": "Error code: 403 - {'error': {'message': 'The free tier of the model has been exhausted. If you wish to continue access the model on a paid basis, please disable the \"use free tier only\" mode in the management console.', 'type': 'AllocationQuota.FreeTierOnly', 'param': None, 'code': 'AllocationQuota.FreeTierOnly'}, 'id': 'chatcmpl-f920250a-a813-9982-a6cc-af8bc69fe285', 'request_id': 'f920250a-a813-9982-a6cc-af8bc69fe285'}"
+    }
+  ]
+}

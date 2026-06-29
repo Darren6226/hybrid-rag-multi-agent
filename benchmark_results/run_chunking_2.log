@@ -1,0 +1,191 @@
+2026-06-17 09:08:12 [__main__] INFO: Loaded PDF: DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf (73966 chars)
+2026-06-17 09:08:12 [app.enhanced_chunking] INFO: 开始增强分块处理：DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 09:08:12 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=False, 元信息增强=True
+2026-06-17 09:08:12 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 09:08:49 [app.enhanced_chunking] INFO: 基础分块完成，生成 35 个块
+2026-06-17 09:08:49 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 09:08:49 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 09:08:49 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 35 个文档块
+2026-06-17 09:08:55 [__main__] INFO: Built vectorstore collection 'benchmark_dnngp_chunking_semantic_metadata_1781658529' with 43 documents
+2026-06-17 09:09:08 [__main__] INFO: Starting RAGAS evaluation for 'dnngp_semantic_metadata' (15 samples)
+============================================================
+Hybrid RAG Multi-Agent Benchmark Suite
+Dataset: dnngp
+Experiment: chunking
+Skip: basic
+============================================================
+
+############################################################
+# Dataset: dnngp
+############################################################
+
+######################################################################
+  Experiment 1: Chunking Strategy Comparison — dnngp
+######################################################################
+   使用pdfminer提取文本...
+   提取完成，使用编码: utf-8, 文本长度: 73966 字符
+
+  ⏭ Skipping basic (already completed)
+
+  Strategy: semantic_metadata
+    Chunks: 35, Avg size: 2129 chars
+
+============================================================
+📊 RAGAS 评估: dnngp_semantic_metadata (vec)
+============================================================
+📝 测试样本数: 15
+
+🔨 准备评估数据集...
+✅ 数据集准备完成
+
+📋 数据集预览:
+  [1] Q: What is DNNGP and what is its primary purpose?...
+      A: Based on the provided context:
+
+**What is DNNGP?**
+DNNGP (Deep Neural Network Ge...
+  [2] Q: What are the five innovative aspects of DNNGP?...
+      A: Based on the provided context, DNNGP is novel in the following five aspects:
+
+1....
+  [3] Q: What is the neural network architecture of DNNGP?...
+      A: Based on the provided context, the neural network architecture of DNNGP features...
+  [4] Q: Which five methods were compared with DNNGP in the...
+      A: Based on the provided context, the five methods compared with DNNGP are:
+
+1. **G...
+  [5] Q: What activation function does DNNGP use and why?...
+      A: Based on the provided context, DNNGP uses the **Rectified Linear Unit (ReLU)** a...
+  [6] Q: How does DNNGP prevent overfitting?...
+      A: Based on the provided context, DNNGP prevents overfitting through three primary ...
+  [7] Q: How does DNNGP's computation time compare to DeepG...
+      A: Based on the provided context, DNNGP's computation time is **up to 10 times fast...
+  [8] Q: What is the goal of plant breeding mentioned in th...
+      A: Based on the provided context, a major goal of plant breeding is to **increase c...
+  [9] Q: What are the four datasets used to evaluate DNNGP?...
+      A: Based on the provided context, the four datasets used to evaluate DNNGP are:
+1. ...
+  [10] Q: What was DNNGP's average prediction accuracy on th...
+      A: Based on the provided context, DNNGP's average prediction accuracy on the wheat5...
+  [11] Q: How does DNNGP compare to traditional genomic pred...
+      A: Based on the provided context, DNNGP compares favorably to traditional genomic p...
+  [12] Q: What advantage do machine learning methods have in...
+      A: Based on the provided context, machine learning (and non-linear/deep learning) m...
+  [13] Q: What makes DNNGP different from DeepGS and DLGWAS ...
+      A: Based on the provided context, DNNGP differs from DeepGS and DLGWAS in the follo...
+  [14] Q: How can DNNGP's hyperparameters be optimized?...
+      A: Based on the provided context, DNNGP's hyperparameters can be optimized by **bat...
+  [15] Q: In the wheat599 dataset, how did GBLUP's performan...
+      A: Based on the provided context, DNNGP consistently outperformed GBLUP across all ...
+
+🔄 正在运行 RAGAS 评估（并行模式，max_workers=3）...
+Evaluating:   0%|          | 0/60 [00:00<?, ?it/s]C:\Users\Darren\anaconda3\Lib\site-packages\langchain_openai\chat_models\base.py:508: UserWarning: Unexpected type for token usage: <class 'NoneType'>
+  warnings.warn(f"Unexpected type for token usage: {type(new_usage)}")
+Evaluating:   2%|▏         | 1/60 [00:32<31:33, 32.10s/it]Evaluating:   3%|▎         | 2/60 [01:05<31:57, 33.06s/it]Evaluating:   5%|▌         | 3/60 [01:50<36:18, 38.23s/it]Evaluating:   7%|▋         | 4/60 [02:21<32:57, 35.31s/it]Evaluating:   8%|▊         | 5/60 [02:41<27:36, 30.12s/it]Evaluating:  10%|█         | 6/60 [03:51<39:18, 43.67s/it]Evaluating:  12%|█▏        | 7/60 [03:54<26:33, 30.07s/it]Evaluating:  13%|█▎        | 8/60 [04:25<26:23, 30.46s/it]Evaluating:  15%|█▌        | 9/60 [05:02<27:37, 32.50s/it]Evaluating:  17%|█▋        | 10/60 [05:40<28:34, 34.29s/it]Evaluating:  18%|█▊        | 11/60 [06:45<35:32, 43.52s/it]Evaluating:  20%|██        | 12/60 [07:11<30:44, 38.43s/it]Evaluating:  22%|██▏       | 13/60 [07:15<21:48, 27.84s/it]Evaluating:  23%|██▎       | 14/60 [07:16<15:08, 19.74s/it]Evaluating:  25%|██▌       | 15/60 [07:38<15:17, 20.39s/it]Evaluating:  27%|██▋       | 16/60 [08:05<16:31, 22.53s/it]Evaluating:  28%|██▊       | 17/60 [09:04<23:57, 33.43s/it]Evaluating:  30%|███       | 18/60 [09:28<21:25, 30.60s/it]Evaluating:  32%|███▏      | 19/60 [09:38<16:35, 24.29s/it]Evaluating:  33%|███▎      | 20/60 [09:53<14:21, 21.53s/it]Evaluating:  35%|███▌      | 21/60 [10:08<12:47, 19.68s/it]Evaluating:  37%|███▋      | 22/60 [10:57<17:58, 28.39s/it]Evaluating:  38%|███▊      | 23/60 [11:57<23:21, 37.89s/it]Evaluating:  40%|████      | 24/60 [12:18<19:47, 33.00s/it]Evaluating:  42%|████▏     | 25/60 [12:23<14:19, 24.55s/it]Evaluating:  43%|████▎     | 26/60 [12:28<10:29, 18.52s/it]Evaluating:  45%|████▌     | 27/60 [12:56<11:48, 21.46s/it]Evaluating:  47%|████▋     | 28/60 [13:23<12:19, 23.09s/it]Evaluating:  48%|████▊     | 29/60 [13:54<13:12, 25.56s/it]Evaluating:  50%|█████     | 30/60 [14:32<14:32, 29.08s/it]Evaluating:  52%|█████▏    | 31/60 [14:47<12:07, 25.10s/it]Evaluating:  53%|█████▎    | 32/60 [15:08<11:08, 23.89s/it]Evaluating:  55%|█████▌    | 33/60 [15:38<11:28, 25.50s/it]Evaluating:  57%|█████▋    | 34/60 [16:10<11:55, 27.54s/it]Evaluating:  58%|█████▊    | 35/60 [16:14<08:28, 20.34s/it]Evaluating:  60%|██████    | 36/60 [16:45<09:26, 23.61s/it]Evaluating:  62%|██████▏   | 37/60 [16:56<07:36, 19.85s/it]Evaluating:  63%|██████▎   | 38/60 [17:05<06:04, 16.57s/it]Evaluating:  65%|██████▌   | 39/60 [17:26<06:19, 18.08s/it]Evaluating:  67%|██████▋   | 40/60 [17:59<07:27, 22.37s/it]Evaluating:  68%|██████▊   | 41/60 [18:50<09:50, 31.06s/it]Evaluating:  70%|███████   | 42/60 [19:28<09:58, 33.25s/it]2026-06-17 09:36:01 [ragas.executor] ERROR: Exception raised in Job[40]: TimeoutError()
+Evaluating:  72%|███████▏  | 43/60 [20:05<09:40, 34.17s/it]Evaluating:  73%|███████▎  | 44/60 [20:34<08:42, 32.65s/it]2026-06-17 09:36:55 [ragas.executor] ERROR: Exception raised in Job[42]: TimeoutError()
+Evaluating:  75%|███████▌  | 45/60 [20:59<07:34, 30.32s/it]Evaluating:  77%|███████▋  | 46/60 [21:36<07:31, 32.27s/it]Evaluating:  78%|███████▊  | 47/60 [21:42<05:17, 24.40s/it]Evaluating:  80%|████████  | 48/60 [22:16<05:28, 27.37s/it]Evaluating:  82%|████████▏ | 49/60 [22:49<05:19, 29.01s/it]Evaluating:  83%|████████▎ | 50/60 [23:22<05:02, 30.25s/it]Evaluating:  85%|████████▌ | 51/60 [24:34<06:24, 42.68s/it]Evaluating:  87%|████████▋ | 52/60 [24:45<04:25, 33.19s/it]Evaluating:  88%|████████▊ | 53/60 [24:59<03:12, 27.57s/it]Evaluating:  90%|█████████ | 54/60 [25:25<02:43, 27.19s/it]Evaluating:  92%|█████████▏| 55/60 [25:41<01:58, 23.78s/it]Evaluating:  93%|█████████▎| 56/60 [26:11<01:42, 25.74s/it]Evaluating:  95%|█████████▌| 57/60 [26:53<01:31, 30.49s/it]Evaluating:  97%|█████████▋| 58/60 [27:21<00:59, 29.76s/it]Evaluating:  98%|█████████▊| 59/60 [27:51<00:29, 29.78s/it]Evaluating: 100%|██████████| 60/60 [28:13<00:00, 27.35s/it]Evaluating: 100%|██████████| 60/60 [28:13<00:00, 28.22s/it]
+2026-06-17 09:44:09 [__main__] INFO: Cleaned up collection: benchmark_dnngp_chunking_semantic_metadata_1781658529
+2026-06-17 09:44:09 [app.enhanced_chunking] INFO: 开始增强分块处理：DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 09:44:09 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=True, 元信息增强=True
+2026-06-17 09:44:09 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 基础分块完成，生成 35 个块
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 构建父子分块结构...
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 父子分块：子块 142 个（入向量库），父块 40 个（lookup）
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 父子分块构建完成
+2026-06-17 09:44:48 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 142 个文档块
+2026-06-17 09:44:57 [__main__] INFO: Built vectorstore collection 'benchmark_dnngp_chunking_parent_child_1781660688' with 142 documents
+2026-06-17 09:44:57 [__main__] INFO: Starting RAGAS evaluation for 'dnngp_parent_child' (15 samples)
+
+────────────────────────────────────────────────────────────
+📊 评估结果:
+────────────────────────────────────────────────────────────
+  Faithfulness (忠实度): 0.9406
+  Answer Relevancy (答案相关性): 0.9698
+  Context Precision (上下文精确度): 0.7648
+  Context Recall (上下文召回率): 0.8667
+  Overall Score (综合分): 0.8855
+────────────────────────────────────────────────────────────
+    RAGAS: F=0.9406 R=0.9698 P=0.7648 Rec=0.8667
+
+  Strategy: parent_child
+    Chunks: 142, Avg size: 551 chars
+    Parent lookup: 40 parent chunks
+
+============================================================
+📊 RAGAS 评估: dnngp_parent_child (vec)
+============================================================
+📝 测试样本数: 15
+
+🔨 准备评估数据集...
+✅ 数据集准备完成
+
+📋 数据集预览:
+  [1] Q: What is DNNGP and what is its primary purpose?...
+      A: Based on the provided context:
+
+**What is DNNGP?**
+DNNGP stands for **Deep Neura...
+  [2] Q: What are the five innovative aspects of DNNGP?...
+      A: Based on the provided context, the five innovative aspects (advantages) of DNNGP...
+  [3] Q: What is the neural network architecture of DNNGP?...
+      A: 基于提供的上下文，DNNGP（Deep Neural Network for Genomic Prediction）的神经网络架构主要包含以下关键组件与设计：
+...
+  [4] Q: Which five methods were compared with DNNGP in the...
+      A: Based on the provided context, the five methods compared with DNNGP are: **GBLUP...
+  [5] Q: What activation function does DNNGP use and why?...
+      A: Based on the provided context, DNNGP uses the **ReLU (Rectified Linear Unit)** a...
+  [6] Q: How does DNNGP prevent overfitting?...
+      A: Based on the provided context, DNNGP prevents overfitting through four main mech...
+  [7] Q: How does DNNGP's computation time compare to DeepG...
+      A: 根据上下文，DNNGP的计算时间显著短于DeepGS。具体而言，DNNGP的运行速度可比DeepGS快约10倍（原文表述为 `could be 10 times...
+  [8] Q: What is the goal of plant breeding mentioned in th...
+      A: Based on the provided context, the goal of plant breeding is to produce crop var...
+  [9] Q: What are the four datasets used to evaluate DNNGP?...
+      A: 根据提供的上下文，**无法找到完整的四个数据集名称**。
+
+文中仅说明评估使用了来自小麦（wheat）、玉米（maize）和番茄（tomato）的四个不同大小的...
+  [10] Q: What was DNNGP's average prediction accuracy on th...
+      A: Based on the provided context, DNNGP's average prediction accuracy on the wheat5...
+  [11] Q: How does DNNGP compare to traditional genomic pred...
+      A: Based on the provided context, DNNGP compares favorably to traditional genomic p...
+  [12] Q: What advantage do machine learning methods have in...
+      A: Based on the provided context, machine learning (ML) methods have the following ...
+  [13] Q: What makes DNNGP different from DeepGS and DLGWAS ...
+      A: Based on the provided context, DNNGP differs from DeepGS and DLGWAS in the follo...
+  [14] Q: How can DNNGP's hyperparameters be optimized?...
+      A: Based on the provided context, DNNGP's hyperparameters can be easily tuned in ba...
+  [15] Q: In the wheat599 dataset, how did GBLUP's performan...
+      A: 根据提供的上下文，在 `wheat599` 数据集的四个环境中，**DNNGP 的表现全面优于 GBLUP**。具体对比如下：
+
+1. **平均预测准确率**：...
+
+🔄 正在运行 RAGAS 评估（并行模式，max_workers=3）...
+Evaluating:   0%|          | 0/60 [00:00<?, ?it/s]2026-06-17 09:55:31 [ragas.executor] ERROR: Exception raised in Job[0]: TimeoutError()
+Evaluating:   2%|▏         | 1/60 [03:00<2:57:00, 180.01s/it]2026-06-17 09:55:31 [ragas.executor] ERROR: Exception raised in Job[1]: TimeoutError()
+2026-06-17 09:55:31 [ragas.executor] ERROR: Exception raised in Job[2]: TimeoutError()
+2026-06-17 09:58:31 [ragas.executor] ERROR: Exception raised in Job[3]: TimeoutError()
+2026-06-17 09:58:31 [ragas.executor] ERROR: Exception raised in Job[4]: TimeoutError()
+Evaluating:   7%|▋         | 4/60 [06:00<1:17:11, 82.71s/it] 2026-06-17 09:58:31 [ragas.executor] ERROR: Exception raised in Job[5]: TimeoutError()
+2026-06-17 10:01:31 [ragas.executor] ERROR: Exception raised in Job[6]: TimeoutError()
+2026-06-17 10:01:31 [ragas.executor] ERROR: Exception raised in Job[7]: TimeoutError()
+2026-06-17 10:01:31 [ragas.executor] ERROR: Exception raised in Job[8]: TimeoutError()
+Evaluating:  12%|█▏        | 7/60 [09:00<1:02:17, 70.52s/it]2026-06-17 10:04:31 [ragas.executor] ERROR: Exception raised in Job[9]: TimeoutError()
+2026-06-17 10:04:31 [ragas.executor] ERROR: Exception raised in Job[10]: TimeoutError()
+2026-06-17 10:04:31 [ragas.executor] ERROR: Exception raised in Job[11]: TimeoutError()
+Evaluating:  17%|█▋        | 10/60 [12:00<54:57, 65.96s/it] 2026-06-17 10:07:31 [ragas.executor] ERROR: Exception raised in Job[12]: TimeoutError()
+Evaluating:  22%|██▏       | 13/60 [15:00<49:52, 63.68s/it]2026-06-17 10:07:31 [ragas.executor] ERROR: Exception raised in Job[13]: TimeoutError()
+2026-06-17 10:07:31 [ragas.executor] ERROR: Exception raised in Job[14]: TimeoutError()
+2026-06-17 10:10:31 [ragas.executor] ERROR: Exception raised in Job[15]: TimeoutError()
+2026-06-17 10:10:31 [ragas.executor] ERROR: Exception raised in Job[16]: TimeoutError()
+Evaluating:  27%|██▋       | 16/60 [18:00<45:44, 62.38s/it]2026-06-17 10:10:31 [ragas.executor] ERROR: Exception raised in Job[17]: TimeoutError()
+2026-06-17 10:13:31 [ragas.executor] ERROR: Exception raised in Job[18]: TimeoutError()
+2026-06-17 10:13:31 [ragas.executor] ERROR: Exception raised in Job[19]: TimeoutError()
+2026-06-17 10:13:31 [ragas.executor] ERROR: Exception raised in Job[20]: TimeoutError()
+Evaluating:  32%|███▏      | 19/60 [21:00<42:04, 61.58s/it]2026-06-17 10:16:31 [ragas.executor] ERROR: Exception raised in Job[21]: TimeoutError()
+2026-06-17 10:16:31 [ragas.executor] ERROR: Exception raised in Job[22]: TimeoutError()
+2026-06-17 10:16:31 [ragas.executor] ERROR: Exception raised in Job[23]: TimeoutError()
+Evaluating:  37%|███▋      | 22/60 [24:00<38:40, 61.07s/it]2026-06-17 10:19:31 [ragas.executor] ERROR: Exception raised in Job[24]: TimeoutError()
+Evaluating:  42%|████▏     | 25/60 [27:00<35:25, 60.73s/it]2026-06-17 10:19:31 [ragas.executor] ERROR: Exception raised in Job[25]: TimeoutError()
+2026-06-17 10:19:31 [ragas.executor] ERROR: Exception raised in Job[26]: TimeoutError()

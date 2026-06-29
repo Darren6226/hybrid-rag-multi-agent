@@ -1,0 +1,64 @@
+2026-06-17 09:08:12 [numexpr.utils] INFO: NumExpr defaulting to 16 threads.
+2026-06-17 09:08:15 [__main__] INFO: Loaded routing test data from D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_data\routing_test_data.json (25 samples)
+2026-06-17 09:08:15 [app.database] INFO: 数据库已有 3 条销售记录，跳过初始化。
+2026-06-17 09:08:15 [app.rag] INFO: ==================================================
+2026-06-17 09:08:15 [app.rag] INFO: RAG 系统初始化开始
+2026-06-17 09:08:15 [app.rag] INFO: ==================================================
+2026-06-17 09:08:15 [app.rag] INFO: 启动增强文档分块系统...
+2026-06-17 09:08:15 [app.rag] INFO: 策略：语义分块 + 元信息增强 | 参数：max_chunk_size=400, min_chunk_size=200, breakpoint_threshold=92
+2026-06-17 09:08:15 [app.rag] INFO: 处理企业知识库文档：D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\doc\company.txt
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 开始增强分块处理：company.txt
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=False, 元信息增强=True
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 09:08:15 [app.enhanced_chunking] WARNING: 语义分块仅产生 1 个块，降级到本地语义分块
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 基础分块完成，生成 5 个块
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 09:08:15 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 5 个文档块
+2026-06-17 09:08:15 [app.rag] INFO: 企业文档增强分块完成，生成 5 个文档块
+2026-06-17 09:08:15 [app.rag] INFO: 处理学术论文文档：D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\pdf\DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 09:08:15 [app.rag] INFO: 使用多模态 PDF 解析器...
+2026-06-17 09:08:18 [app.rag] INFO: 多模态解析完成，生成 192 个文档块
+2026-06-17 09:08:18 [app.rag] INFO: 总计文档块数: 197 (企业:5, DNNGP:192)
+2026-06-17 09:08:18 [app.rag] INFO: GraphRAG 构建策略: TXT=5 块(启用), PDF=192 块(仅向量)
+D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\app\rag.py:278: LangChainDeprecationWarning: The class `Neo4jGraph` was deprecated in LangChain 0.3.8 and will be removed in 1.0. An updated version of the class exists in the `langchain-neo4j package and should be used instead. To use it run `pip install -U `langchain-neo4j` and import as `from `langchain_neo4j import Neo4jGraph``.
+  graph_conn = Neo4jGraph(url=NEO4J_URL, username="neo4j", password="password", database="neo4j")
+2026-06-17 09:08:20 [app.rag] INFO: Neo4j 连接成功
+2026-06-17 09:08:20 [app.rag] INFO: 正在构建图知识库索引... (仅处理 5 个 TXT 文档块)
+2026-06-17 09:08:20 [app.rag] INFO: 处理批次 1/1 (TXT文档块 1-5)...
+2026-06-17 09:20:59 [app.rag] INFO: 批次完成，提取 5 个图文档
+2026-06-17 09:20:59 [app.rag] INFO: 图索引构建完成！图文档数: 5
+2026-06-17 09:21:01 [app.rag] INFO: 正在构建 Milvus 向量索引...
+2026-06-17 09:21:01 [app.rag] INFO: Milvus 默认连接已初始化
+2026-06-17 09:21:01 [app.rag] INFO: 检测到旧集合 company_milvus，正在删除...
+2026-06-17 09:21:01 [app.rag] INFO: 旧集合已删除
+2026-06-17 09:21:01 [app.rag] INFO: 准备向量化 197 个文档块...
+2026-06-17 09:21:15 [app.rag] INFO: 向量索引构建完成，共 197 个文档块
+2026-06-17 09:21:15 [app.rag] INFO: ==================================================
+2026-06-17 09:21:15 [app.rag] INFO: RAG 系统初始化完成
+2026-06-17 09:21:15 [app.rag] INFO: ==================================================
+2026-06-17 09:21:15 [app.graph_builder] INFO: LangGraph 编排图已构建 (skip_graph_kg=False)
+2026-06-17 09:21:15 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 09:21:15 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 09:21:15 [app.supervisor] INFO:   上一步: 无
+2026-06-17 09:21:15 [app.supervisor] INFO:   策略状态: {'total_turns': 0, 'worker_attempts': {}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.5, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 09:21:20 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 09:21:20 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 09:21:20 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 09:21:34 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 09:21:34 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 09:21:34 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 09:21:34 [app.supervisor] INFO:   策略状态: {'total_turns': 1, 'worker_attempts': {'sqler': 1}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.55, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 09:21:37 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 09:21:37 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 09:21:37 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 09:21:37 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 09:21:37 [app.supervisor] INFO:   上一步: 无
+2026-06-17 09:21:37 [app.supervisor] INFO:   策略状态: {'total_turns': 2, 'worker_attempts': {'sqler': 1}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.55, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 09:21:50 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 09:21:50 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 09:21:50 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 09:22:10 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 09:22:10 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 09:22:10 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 09:22:10 [app.supervisor] INFO:   策略状态: {'total_turns': 3, 'worker_attempts': {'sqler': 2}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.5950000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}

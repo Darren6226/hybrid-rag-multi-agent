@@ -1,0 +1,27 @@
+2026-06-17 08:54:58 [__main__] INFO: Loaded PDF: DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf (73966 chars)
+2026-06-17 08:54:58 [app.enhanced_chunking] INFO: 开始增强分块处理：DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 08:54:58 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=False, 元信息增强=True
+2026-06-17 08:54:58 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 08:55:31 [app.enhanced_chunking] INFO: 基础分块完成，生成 35 个块
+2026-06-17 08:55:31 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 08:55:31 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 08:55:31 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 35 个文档块
+2026-06-17 08:56:01 [__main__] ERROR: Experiment hybrid failed on dnngp: <MilvusException: (code=2, message=Fail connecting to server on localhost:19530, illegal connection params or server unavailable)>
+============================================================
+Hybrid RAG Multi-Agent Benchmark Suite
+Dataset: dnngp
+Experiment: hybrid
+============================================================
+
+############################################################
+# Dataset: dnngp
+############################################################
+
+######################################################################
+  Experiment 3: Hybrid Retrieval Comparison — dnngp
+######################################################################
+   使用pdfminer提取文本...
+   提取完成，使用编码: utf-8, 文本长度: 73966 字符
+  ERROR in hybrid: <MilvusException: (code=2, message=Fail connecting to server on localhost:19530, illegal connection params or server unavailable)>
+
+Report saved to: D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_results\benchmark_report.md

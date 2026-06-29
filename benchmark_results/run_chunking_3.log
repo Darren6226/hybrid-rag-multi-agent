@@ -1,0 +1,109 @@
+2026-06-17 10:22:14 [__main__] INFO: Loaded PDF: DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf (73966 chars)
+2026-06-17 10:22:14 [app.enhanced_chunking] INFO: 开始增强分块处理：DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 10:22:14 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=True, 元信息增强=True
+2026-06-17 10:22:14 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 10:22:55 [app.enhanced_chunking] INFO: 基础分块完成，生成 35 个块
+2026-06-17 10:22:55 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 10:22:55 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 10:22:55 [app.enhanced_chunking] INFO: 构建父子分块结构...
+2026-06-17 10:22:56 [app.enhanced_chunking] INFO: 父子分块：子块 142 个（入向量库），父块 40 个（lookup）
+2026-06-17 10:22:56 [app.enhanced_chunking] INFO: 父子分块构建完成
+2026-06-17 10:22:56 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 142 个文档块
+2026-06-17 10:23:07 [__main__] INFO: Built vectorstore collection 'benchmark_dnngp_chunking_parent_child_1781662976' with 142 documents
+2026-06-17 10:23:20 [__main__] INFO: Starting RAGAS evaluation for 'dnngp_parent_child' (15 samples)
+============================================================
+Hybrid RAG Multi-Agent Benchmark Suite
+Dataset: dnngp
+Experiment: chunking
+Skip: basic,semantic_metadata
+============================================================
+
+############################################################
+# Dataset: dnngp
+############################################################
+
+######################################################################
+  Experiment 1: Chunking Strategy Comparison — dnngp
+######################################################################
+   使用pdfminer提取文本...
+   提取完成，使用编码: utf-8, 文本长度: 73966 字符
+
+  ⏭ Skipping basic (already completed)
+
+  ⏭ Skipping semantic_metadata (already completed)
+
+  Strategy: parent_child
+    Chunks: 142, Avg size: 551 chars
+    Parent lookup: 40 parent chunks
+
+============================================================
+📊 RAGAS 评估: dnngp_parent_child (vec)
+============================================================
+📝 测试样本数: 15
+
+🔨 准备评估数据集...
+✅ 数据集准备完成
+
+📋 数据集预览:
+  [1] Q: What is DNNGP and what is its primary purpose?...
+      A: Based on the provided context:
+
+* **What DNNGP is:** DNNGP stands for **Deep Neu...
+  [2] Q: What are the five innovative aspects of DNNGP?...
+      A: Based on the provided context, the five innovative aspects (explicitly listed as...
+  [3] Q: What is the neural network architecture of DNNGP?...
+      A: Based on the provided context, the neural network architecture of DNNGP features...
+  [4] Q: Which five methods were compared with DNNGP in the...
+      A: Based on the provided context, the five methods compared with DNNGP are: **GBLUP...
+  [5] Q: What activation function does DNNGP use and why?...
+      A: Based on the provided context, DNNGP uses the **ReLU (Rectified Linear Unit)** a...
+  [6] Q: How does DNNGP prevent overfitting?...
+      A: Based on the provided context, DNNGP prevents overfitting through the following ...
+  [7] Q: How does DNNGP's computation time compare to DeepG...
+      A: Based on the provided context, DNNGP's computation time is significantly shorter...
+  [8] Q: What is the goal of plant breeding mentioned in th...
+      A: Based on the provided context, the goal of plant breeding is to produce crop var...
+  [9] Q: What are the four datasets used to evaluate DNNGP?...
+      A: 根据提供的上下文，文中指出评估DNNGP共使用了**四个不同大小的数据集**，具体涉及**小麦（wheat）**、**玉米（maize）**和**番茄（toma...
+  [10] Q: What was DNNGP's average prediction accuracy on th...
+      A: Based on the provided context, DNNGP's average prediction accuracy on the wheat5...
+  [11] Q: How does DNNGP compare to traditional genomic pred...
+      A: Based on the provided context, DNNGP compares favorably to traditional genomic p...
+  [12] Q: What advantage do machine learning methods have in...
+      A: Based on the provided context, machine learning (ML) methods have the advantage ...
+  [13] Q: What makes DNNGP different from DeepGS and DLGWAS ...
+      A: Based on the provided context, DNNGP differs from DeepGS and DLGWAS in its archi...
+  [14] Q: How can DNNGP's hyperparameters be optimized?...
+      A: Based on the provided context, DNNGP's hyperparameters can be easily tuned in ba...
+  [15] Q: In the wheat599 dataset, how did GBLUP's performan...
+      A: Based on the provided context, DNNGP consistently outperformed GBLUP across all ...
+
+🔄 正在运行 RAGAS 评估（并行模式，max_workers=3）...
+Evaluating:   0%|          | 0/60 [00:00<?, ?it/s]2026-06-17 10:34:04 [ragas.executor] ERROR: Exception raised in Job[0]: TimeoutError()
+Evaluating:   2%|▏         | 1/60 [03:00<2:57:00, 180.01s/it]C:\Users\Darren\anaconda3\Lib\site-packages\langchain_openai\chat_models\base.py:508: UserWarning: Unexpected type for token usage: <class 'NoneType'>
+  warnings.warn(f"Unexpected type for token usage: {type(new_usage)}")
+Evaluating:   3%|▎         | 2/60 [03:30<1:29:03, 92.14s/it] Evaluating:   5%|▌         | 3/60 [05:31<1:39:58, 105.24s/it]Evaluating:   7%|▋         | 4/60 [06:04<1:11:41, 76.81s/it] 2026-06-17 10:40:09 [ragas.executor] ERROR: Exception raised in Job[4]: TimeoutError()
+Evaluating:   8%|▊         | 5/60 [09:04<1:44:31, 114.02s/it]Evaluating:  10%|█         | 6/60 [09:36<1:17:19, 85.92s/it] Evaluating:  12%|█▏        | 7/60 [11:13<1:19:13, 89.68s/it]Evaluating:  13%|█▎        | 8/60 [12:24<1:12:42, 83.89s/it]2026-06-17 10:46:29 [ragas.executor] ERROR: Exception raised in Job[8]: TimeoutError()
+Evaluating:  15%|█▌        | 9/60 [15:25<1:36:51, 113.94s/it]Evaluating:  17%|█▋        | 10/60 [15:58<1:14:12, 89.05s/it]Evaluating:  18%|█▊        | 11/60 [17:29<1:13:08, 89.56s/it]Evaluating:  20%|██        | 12/60 [18:05<58:48, 73.50s/it]  Evaluating:  22%|██▏       | 13/60 [19:20<57:58, 74.01s/it]Evaluating:  23%|██▎       | 14/60 [19:46<45:30, 59.37s/it]Evaluating:  25%|██▌       | 15/60 [21:38<56:31, 75.36s/it]Evaluating:  27%|██▋       | 16/60 [22:17<47:13, 64.39s/it]Evaluating:  28%|██▊       | 17/60 [24:04<55:08, 76.95s/it]Evaluating:  30%|███       | 18/60 [24:27<42:37, 60.89s/it]Evaluating:  32%|███▏      | 19/60 [26:10<50:15, 73.55s/it]Evaluating:  33%|███▎      | 20/60 [26:53<42:51, 64.28s/it]Evaluating:  35%|███▌      | 21/60 [29:36<1:01:07, 94.03s/it]Evaluating:  37%|███▋      | 22/60 [30:08<47:39, 75.24s/it]  Evaluating:  38%|███▊      | 23/60 [32:06<54:22, 88.17s/it]Evaluating:  40%|████      | 24/60 [32:47<44:28, 74.13s/it]Evaluating:  42%|████▏     | 25/60 [34:43<50:27, 86.49s/it]Evaluating:  43%|████▎     | 26/60 [35:06<38:21, 67.70s/it]Evaluating:  45%|████▌     | 27/60 [36:50<43:08, 78.44s/it]Evaluating:  47%|████▋     | 28/60 [37:24<34:45, 65.18s/it]Evaluating:  48%|████▊     | 29/60 [39:03<38:49, 75.14s/it]Evaluating:  50%|█████     | 30/60 [39:24<29:26, 58.89s/it]Evaluating:  52%|█████▏    | 31/60 [40:47<31:58, 66.17s/it]Evaluating:  53%|█████▎    | 32/60 [41:21<26:28, 56.75s/it]Evaluating:  55%|█████▌    | 33/60 [43:26<34:45, 77.23s/it]Evaluating:  57%|█████▋    | 34/60 [44:12<29:21, 67.76s/it]Evaluating:  58%|█████▊    | 35/60 [46:43<38:38, 92.76s/it]Evaluating:  60%|██████    | 36/60 [47:35<32:13, 80.56s/it]Evaluating:  62%|██████▏   | 37/60 [48:43<29:20, 76.54s/it]Evaluating:  63%|██████▎   | 38/60 [49:07<22:18, 60.84s/it]Evaluating:  65%|██████▌   | 39/60 [50:47<25:24, 72.61s/it]Evaluating:  67%|██████▋   | 40/60 [51:25<20:48, 62.43s/it]2026-06-17 11:25:30 [ragas.executor] ERROR: Exception raised in Job[40]: TimeoutError()
+Evaluating:  68%|██████▊   | 41/60 [54:25<30:56, 97.70s/it]Evaluating:  70%|███████   | 42/60 [54:56<23:17, 77.65s/it]Evaluating:  72%|███████▏  | 43/60 [57:30<28:27, 100.43s/it]Evaluating:  73%|███████▎  | 44/60 [58:13<22:09, 83.09s/it] Evaluating:  75%|███████▌  | 45/60 [1:00:13<23:33, 94.27s/it]Evaluating:  77%|███████▋  | 46/60 [1:00:41<17:22, 74.49s/it]Evaluating:  78%|███████▊  | 47/60 [1:01:58<16:16, 75.09s/it]Evaluating:  80%|████████  | 48/60 [1:02:31<12:28, 62.41s/it]Evaluating:  82%|████████▏ | 49/60 [1:05:14<16:58, 92.63s/it]Evaluating:  83%|████████▎ | 50/60 [1:05:52<12:44, 76.42s/it]Evaluating:  85%|████████▌ | 51/60 [1:07:38<12:46, 85.21s/it]Evaluating:  87%|████████▋ | 52/60 [1:08:11<09:15, 69.49s/it]Evaluating:  88%|████████▊ | 53/60 [1:09:33<08:32, 73.17s/it]Evaluating:  90%|█████████ | 54/60 [1:10:02<05:59, 59.95s/it]Evaluating:  92%|█████████▏| 55/60 [1:11:51<06:13, 74.64s/it]Evaluating:  93%|█████████▎| 56/60 [1:12:42<04:30, 67.72s/it]Evaluating:  95%|█████████▌| 57/60 [1:15:01<04:27, 89.03s/it]Evaluating:  97%|█████████▋| 58/60 [1:15:30<02:22, 71.15s/it]Evaluating:  98%|█████████▊| 59/60 [1:17:17<01:21, 81.66s/it]Evaluating: 100%|██████████| 60/60 [1:17:45<00:00, 65.85s/it]Evaluating: 100%|██████████| 60/60 [1:17:45<00:00, 77.77s/it]
+2026-06-17 11:48:51 [__main__] INFO: Cleaned up collection: benchmark_dnngp_chunking_parent_child_1781662976
+
+────────────────────────────────────────────────────────────
+📊 评估结果:
+────────────────────────────────────────────────────────────
+  Faithfulness (忠实度): 0.9051
+  Answer Relevancy (答案相关性): 0.9606
+  Context Precision (上下文精确度): 0.6629
+  Context Recall (上下文召回率): 0.8000
+  Overall Score (综合分): 0.8321
+────────────────────────────────────────────────────────────
+    RAGAS: F=0.9051 R=0.9606 P=0.6629 Rec=0.8000
+
+Chunking Strategy Comparison (dnngp)
++-------------+----------------+--------------------+--------------------+--------------------+----------------+--------------------+
+| chunk_count | avg_chunk_size |    faithfulness    |  answer_relevancy  | context_precision  | context_recall |   overall_score    |
++=============+================+====================+====================+====================+================+====================+
+|         142 |          551.0 | 0.9051282051282051 | 0.9605985101213362 | 0.6628703703329344 |            0.8 | 0.8321492713956189 | *
++-------------+----------------+--------------------+--------------------+--------------------+----------------+--------------------+
+
+Report saved to: D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_results\benchmark_report.md

@@ -1,0 +1,547 @@
+2026-06-17 16:09:46 [numexpr.utils] INFO: NumExpr defaulting to 16 threads.
+2026-06-17 16:09:49 [__main__] INFO: Loaded routing test data from D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_data\routing_test_data.json (25 samples)
+2026-06-17 16:09:49 [app.database] INFO: 数据库已有 3 条销售记录，跳过初始化。
+2026-06-17 16:09:49 [app.rag] INFO: ==================================================
+2026-06-17 16:09:49 [app.rag] INFO: RAG 系统初始化开始
+2026-06-17 16:09:49 [app.rag] INFO: ==================================================
+2026-06-17 16:09:49 [app.rag] INFO: 启动增强文档分块系统...
+2026-06-17 16:09:49 [app.rag] INFO: 策略：语义分块 + 元信息增强 | 参数：max_chunk_size=400, min_chunk_size=200, breakpoint_threshold=92
+2026-06-17 16:09:49 [app.rag] INFO: 处理企业知识库文档：D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\doc\company.txt
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 开始增强分块处理：company.txt
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 配置：语义分块=True, 父子分块=False, 元信息增强=True
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 应用语义分块策略...
+2026-06-17 16:09:49 [app.enhanced_chunking] WARNING: 语义分块仅产生 1 个块，降级到本地语义分块
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 基础分块完成，生成 5 个块
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 提取元信息...
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 元信息增强完成
+2026-06-17 16:09:49 [app.enhanced_chunking] INFO: 增强分块处理完成，最终生成 5 个文档块
+2026-06-17 16:09:49 [app.rag] INFO: 企业文档增强分块完成，生成 5 个文档块
+2026-06-17 16:09:49 [app.rag] INFO: 处理学术论文文档：D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\pdf\DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+2026-06-17 16:09:49 [app.rag] INFO: 使用多模态 PDF 解析器...
+2026-06-17 16:09:52 [app.rag] INFO: 多模态解析完成，生成 192 个文档块
+2026-06-17 16:09:52 [app.rag] INFO: 总计文档块数: 197 (企业:5, DNNGP:192)
+2026-06-17 16:09:52 [app.rag] INFO: GraphRAG 构建策略: TXT=5 块(启用), PDF=192 块(仅向量)
+D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\app\rag.py:278: LangChainDeprecationWarning: The class `Neo4jGraph` was deprecated in LangChain 0.3.8 and will be removed in 1.0. An updated version of the class exists in the `langchain-neo4j package and should be used instead. To use it run `pip install -U `langchain-neo4j` and import as `from `langchain_neo4j import Neo4jGraph``.
+  graph_conn = Neo4jGraph(url=NEO4J_URL, username="neo4j", password="password", database="neo4j")
+2026-06-17 16:09:53 [app.rag] INFO: Neo4j 连接成功
+2026-06-17 16:09:53 [app.rag] INFO: Neo4j 已有 590 个节点，跳过图索引构建
+2026-06-17 16:09:53 [app.rag] INFO: 正在构建 Milvus 向量索引...
+2026-06-17 16:09:53 [app.rag] INFO: Milvus 默认连接已初始化
+2026-06-17 16:09:53 [app.rag] INFO: 准备向量化 197 个文档块...
+2026-06-17 16:10:06 [app.rag] INFO: 向量索引构建完成，共 197 个文档块
+2026-06-17 16:10:06 [app.rag] INFO: ==================================================
+2026-06-17 16:10:06 [app.rag] INFO: RAG 系统初始化完成
+2026-06-17 16:10:06 [app.rag] INFO: ==================================================
+2026-06-17 16:10:06 [app.graph_builder] INFO: LangGraph 编排图已构建 (skip_graph_kg=False)
+2026-06-17 16:10:06 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:10:06 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:10:06 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:10:06 [app.supervisor] INFO:   策略状态: {'total_turns': 0, 'worker_attempts': {}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.5, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:10:11 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 16:10:11 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 16:10:11 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 16:10:26 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:10:26 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 16:10:26 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 16:10:26 [app.supervisor] INFO:   策略状态: {'total_turns': 1, 'worker_attempts': {'sqler': 1}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.55, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:10:27 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:10:27 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:10:27 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:10:27 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:10:27 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:10:27 [app.supervisor] INFO:   策略状态: {'total_turns': 2, 'worker_attempts': {'sqler': 1}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.55, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:10:31 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 16:10:31 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 16:10:31 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 16:10:50 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:10:50 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 16:10:50 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 16:10:50 [app.supervisor] INFO:   策略状态: {'total_turns': 3, 'worker_attempts': {'sqler': 2}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.5950000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:10:52 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:10:52 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:10:52 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:10:52 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:10:52 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:10:52 [app.supervisor] INFO:   策略状态: {'total_turns': 4, 'worker_attempts': {'sqler': 2}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.5950000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:10:58 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 16:10:58 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 16:10:58 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 16:11:22 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:11:22 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 16:11:22 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 16:11:22 [app.supervisor] INFO:   策略状态: {'total_turns': 5, 'worker_attempts': {'sqler': 3}, 'worker_success_rates': {'chat': 0.5, 'coder': 0.5, 'sqler': 0.6355000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:11:24 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:11:24 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:11:24 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:11:49 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:11:49 [app.supervisor] INFO:   已尝试: ['sqler', 'chat']
+2026-06-17 16:11:49 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:11:49 [app.supervisor] INFO:   策略状态: {'total_turns': 6, 'worker_attempts': {'sqler': 3, 'chat': 1}, 'worker_success_rates': {'chat': 0.55, 'coder': 0.5, 'sqler': 0.6355000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:11:52 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:11:52 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:11:52 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:11:52 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:11:52 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:11:52 [app.supervisor] INFO:   策略状态: {'total_turns': 7, 'worker_attempts': {'sqler': 3, 'chat': 1}, 'worker_success_rates': {'chat': 0.55, 'coder': 0.5, 'sqler': 0.6355000000000001, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:11:58 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 16:11:58 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 16:11:58 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 16:12:24 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:12:24 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 16:12:24 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 16:12:24 [app.supervisor] INFO:   策略状态: {'total_turns': 8, 'worker_attempts': {'sqler': 4, 'chat': 1}, 'worker_success_rates': {'chat': 0.55, 'coder': 0.5, 'sqler': 0.67195, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:12:30 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:12:30 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:12:30 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:12:30 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:12:30 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:12:30 [app.supervisor] INFO:   策略状态: {'total_turns': 9, 'worker_attempts': {'sqler': 4, 'chat': 1}, 'worker_success_rates': {'chat': 0.55, 'coder': 0.5, 'sqler': 0.67195, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:12:32 [app.supervisor] INFO: [Supervisor] LLM 建议：sqler
+2026-06-17 16:12:32 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [sqler]
+2026-06-17 16:12:32 [app.nodes] INFO: [Worker: sqler] 正在执行结构化数据库查询...
+2026-06-17 16:12:57 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:12:57 [app.supervisor] INFO:   已尝试: ['sqler']
+2026-06-17 16:12:57 [app.supervisor] INFO:   上一步: sqler
+2026-06-17 16:12:57 [app.supervisor] INFO:   策略状态: {'total_turns': 10, 'worker_attempts': {'sqler': 5, 'chat': 1}, 'worker_success_rates': {'chat': 0.55, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:13:00 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:13:00 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:13:00 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:13:25 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:13:25 [app.supervisor] INFO:   已尝试: ['sqler', 'chat']
+2026-06-17 16:13:25 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:13:25 [app.supervisor] INFO:   策略状态: {'total_turns': 11, 'worker_attempts': {'sqler': 5, 'chat': 2}, 'worker_success_rates': {'chat': 0.5950000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:14:01 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:14:01 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:14:01 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:14:01 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:14:01 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:14:01 [app.supervisor] INFO:   策略状态: {'total_turns': 12, 'worker_attempts': {'sqler': 5, 'chat': 2}, 'worker_success_rates': {'chat': 0.5950000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5, 'vec_kg': 0.5}}
+2026-06-17 16:16:06 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:16:06 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:16:06 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:17:10 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:17:10 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:17:10 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:17:10 [app.supervisor] INFO:   策略状态: {'total_turns': 13, 'worker_attempts': {'sqler': 5, 'chat': 2, 'graph_kg': 1}, 'worker_success_rates': {'chat': 0.5950000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.55, 'vec_kg': 0.5}}
+2026-06-17 16:17:19 [app.supervisor] INFO: [Supervisor] LLM 建议：vec_kg
+2026-06-17 16:17:19 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [vec_kg]
+2026-06-17 16:17:19 [app.nodes] INFO: [Worker: vec_kg] 正在执行 Milvus 向量语义检索...
+2026-06-17 16:17:45 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:17:45 [app.supervisor] INFO:   已尝试: ['vec_kg', 'graph_kg']
+2026-06-17 16:17:45 [app.supervisor] INFO:   上一步: vec_kg
+2026-06-17 16:17:45 [app.supervisor] INFO:   策略状态: {'total_turns': 14, 'worker_attempts': {'sqler': 5, 'chat': 2, 'graph_kg': 1, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.5950000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.55, 'vec_kg': 0.55}}
+2026-06-17 16:17:53 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:17:53 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:17:53 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:18:24 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:18:24 [app.supervisor] INFO:   已尝试: ['vec_kg', 'chat', 'graph_kg']
+2026-06-17 16:18:24 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:18:24 [app.supervisor] INFO:   策略状态: {'total_turns': 15, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 1, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.55, 'vec_kg': 0.55}}
+2026-06-17 16:18:31 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:18:31 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:18:31 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:18:31 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:18:31 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:18:31 [app.supervisor] INFO:   策略状态: {'total_turns': 16, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 1, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.55, 'vec_kg': 0.55}}
+2026-06-17 16:18:32 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:18:32 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:18:32 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:19:16 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:19:16 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:19:16 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:19:16 [app.supervisor] INFO:   策略状态: {'total_turns': 17, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 2, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5950000000000001, 'vec_kg': 0.55}}
+2026-06-17 16:19:23 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:19:23 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:19:23 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:19:23 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:19:23 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:19:23 [app.supervisor] INFO:   策略状态: {'total_turns': 18, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 2, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5950000000000001, 'vec_kg': 0.55}}
+2026-06-17 16:21:30 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:21:30 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:21:30 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:22:13 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:22:13 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:22:13 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:22:13 [app.supervisor] INFO:   策略状态: {'total_turns': 19, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 3, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.6355000000000001, 'vec_kg': 0.55}}
+2026-06-17 16:22:25 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:22:25 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:22:25 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:22:25 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:22:25 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:22:25 [app.supervisor] INFO:   策略状态: {'total_turns': 20, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 3, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.6355000000000001, 'vec_kg': 0.55}}
+2026-06-17 16:22:26 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:22:26 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:22:26 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:23:37 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:23:37 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:23:37 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:23:37 [app.supervisor] INFO:   策略状态: {'total_turns': 21, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 4, 'vec_kg': 1}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.55}}
+2026-06-17 16:23:42 [app.supervisor] INFO: [Supervisor] LLM 建议：vec_kg
+2026-06-17 16:23:42 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [vec_kg]
+2026-06-17 16:23:42 [app.nodes] INFO: [Worker: vec_kg] 正在执行 Milvus 向量语义检索...
+2026-06-17 16:24:24 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:24:24 [app.supervisor] INFO:   已尝试: ['vec_kg', 'graph_kg']
+2026-06-17 16:24:24 [app.supervisor] INFO:   上一步: vec_kg
+2026-06-17 16:24:24 [app.supervisor] INFO:   策略状态: {'total_turns': 22, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 4, 'vec_kg': 2}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.5950000000000001}}
+2026-06-17 16:24:30 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:24:30 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:24:30 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:24:30 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:24:30 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:24:30 [app.supervisor] INFO:   策略状态: {'total_turns': 23, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 4, 'vec_kg': 2}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.5950000000000001}}
+2026-06-17 16:26:47 [app.supervisor] INFO: [Supervisor] LLM 建议：vec_kg
+2026-06-17 16:26:47 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [vec_kg]
+2026-06-17 16:26:47 [app.nodes] INFO: [Worker: vec_kg] 正在执行 Milvus 向量语义检索...
+2026-06-17 16:27:25 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:27:25 [app.supervisor] INFO:   已尝试: ['vec_kg']
+2026-06-17 16:27:25 [app.supervisor] INFO:   上一步: vec_kg
+2026-06-17 16:27:25 [app.supervisor] INFO:   策略状态: {'total_turns': 24, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:27:29 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:27:29 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:27:29 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:27:29 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:27:29 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:27:29 [app.supervisor] INFO:   策略状态: {'total_turns': 25, 'worker_attempts': {'sqler': 5, 'chat': 3, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.6355000000000001, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:27:33 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:27:33 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:27:33 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:28:04 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:28:04 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:28:04 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:28:04 [app.supervisor] INFO:   策略状态: {'total_turns': 26, 'worker_attempts': {'sqler': 5, 'chat': 4, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.67195, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:28:10 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:28:10 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:28:10 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:28:10 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:28:10 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:28:10 [app.supervisor] INFO:   策略状态: {'total_turns': 27, 'worker_attempts': {'sqler': 5, 'chat': 4, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.67195, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:28:14 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:28:14 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:28:14 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:28:49 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:28:49 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:28:49 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:28:49 [app.supervisor] INFO:   策略状态: {'total_turns': 28, 'worker_attempts': {'sqler': 5, 'chat': 5, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.704755, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:28:57 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:28:57 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:28:57 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:28:57 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:28:57 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:28:57 [app.supervisor] INFO:   策略状态: {'total_turns': 29, 'worker_attempts': {'sqler': 5, 'chat': 5, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.704755, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:29:01 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:29:01 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:29:01 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:29:56 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:29:56 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:29:56 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:29:56 [app.supervisor] INFO:   策略状态: {'total_turns': 30, 'worker_attempts': {'sqler': 5, 'chat': 6, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.7342795, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:30:04 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:30:04 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:30:04 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:30:04 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:30:04 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:30:04 [app.supervisor] INFO:   策略状态: {'total_turns': 31, 'worker_attempts': {'sqler': 5, 'chat': 6, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.7342795, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:30:13 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:30:13 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:30:13 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:31:04 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:31:04 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:31:04 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:31:04 [app.supervisor] INFO:   策略状态: {'total_turns': 32, 'worker_attempts': {'sqler': 5, 'chat': 7, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.7608515499999999, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:31:59 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:31:59 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:31:59 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:31:59 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:31:59 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:31:59 [app.supervisor] INFO:   策略状态: {'total_turns': 33, 'worker_attempts': {'sqler': 5, 'chat': 7, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.7608515499999999, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:32:03 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:32:03 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:32:03 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:32:42 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:32:42 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:32:42 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:32:42 [app.supervisor] INFO:   策略状态: {'total_turns': 34, 'worker_attempts': {'sqler': 5, 'chat': 8, 'graph_kg': 4, 'vec_kg': 3}, 'worker_success_rates': {'chat': 0.7847663949999999, 'coder': 0.5, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:33:14 [app.supervisor] INFO: [Supervisor] LLM 建议：coder
+2026-06-17 16:33:14 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [coder]
+2026-06-17 16:33:14 [app.nodes] INFO: [Worker: coder] 正在执行 Python 代码生成与计算...
+2026-06-17 16:34:01 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:01 [app.supervisor] INFO:   已尝试: ['coder', 'chat']
+2026-06-17 16:34:01 [app.supervisor] INFO:   上一步: coder
+2026-06-17 16:34:01 [app.supervisor] INFO:   策略状态: {'total_turns': 35, 'worker_attempts': {'sqler': 5, 'chat': 8, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.7847663949999999, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:18 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:34:18 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:34:18 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:18 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:34:18 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:34:18 [app.supervisor] INFO:   策略状态: {'total_turns': 36, 'worker_attempts': {'sqler': 5, 'chat': 8, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.7847663949999999, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:19 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:34:19 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:34:19 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:34:24 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:24 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:34:24 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:34:24 [app.supervisor] INFO:   策略状态: {'total_turns': 37, 'worker_attempts': {'sqler': 5, 'chat': 9, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.8062897554999999, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:29 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:34:29 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:34:29 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:29 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:34:29 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:34:29 [app.supervisor] INFO:   策略状态: {'total_turns': 38, 'worker_attempts': {'sqler': 5, 'chat': 9, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.8062897554999999, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:36 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:34:36 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:34:36 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:34:43 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:43 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:34:43 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:34:43 [app.supervisor] INFO:   策略状态: {'total_turns': 39, 'worker_attempts': {'sqler': 5, 'chat': 10, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.82566077995, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:45 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:34:45 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:34:45 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:45 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:34:45 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:34:45 [app.supervisor] INFO:   策略状态: {'total_turns': 40, 'worker_attempts': {'sqler': 5, 'chat': 10, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.82566077995, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:47 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:34:47 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:34:47 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:34:54 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:54 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:34:54 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:34:54 [app.supervisor] INFO:   策略状态: {'total_turns': 41, 'worker_attempts': {'sqler': 5, 'chat': 11, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.843094701955, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:56 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:34:56 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:34:56 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:34:56 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:34:56 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:34:56 [app.supervisor] INFO:   策略状态: {'total_turns': 42, 'worker_attempts': {'sqler': 5, 'chat': 11, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.843094701955, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:34:58 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:34:58 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:34:58 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:35:09 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:35:09 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:35:09 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:35:09 [app.supervisor] INFO:   策略状态: {'total_turns': 43, 'worker_attempts': {'sqler': 5, 'chat': 12, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.8587852317595001, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:35:13 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:35:13 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:35:13 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:35:13 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:35:13 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:35:13 [app.supervisor] INFO:   策略状态: {'total_turns': 44, 'worker_attempts': {'sqler': 5, 'chat': 12, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.8587852317595001, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:35:17 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:35:17 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:35:17 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:35:35 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:35:35 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:35:35 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:35:35 [app.supervisor] INFO:   策略状态: {'total_turns': 45, 'worker_attempts': {'sqler': 5, 'chat': 13, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.87290670858355, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:35:45 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:35:45 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:35:45 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:35:45 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:35:45 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:35:45 [app.supervisor] INFO:   策略状态: {'total_turns': 46, 'worker_attempts': {'sqler': 5, 'chat': 13, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.87290670858355, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:39:55 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:39:55 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:39:55 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:40:31 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:40:31 [app.supervisor] INFO:   已尝试: ['chat']
+2026-06-17 16:40:31 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:40:31 [app.supervisor] INFO:   策略状态: {'total_turns': 47, 'worker_attempts': {'sqler': 5, 'chat': 14, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.885616037725195, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:40:35 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:40:35 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:40:35 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:40:35 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:40:35 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:40:35 [app.supervisor] INFO:   策略状态: {'total_turns': 48, 'worker_attempts': {'sqler': 5, 'chat': 14, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.885616037725195, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:46:37 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:46:37 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:46:37 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:46:37 [app.supervisor] INFO:   策略状态: {'total_turns': 48, 'worker_attempts': {'sqler': 5, 'chat': 14, 'graph_kg': 4, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.885616037725195, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.5719500000000001, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:46:47 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:46:47 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:46:47 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:48:16 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:48:16 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:48:16 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:48:16 [app.supervisor] INFO:   策略状态: {'total_turns': 49, 'worker_attempts': {'sqler': 5, 'chat': 14, 'graph_kg': 5, 'vec_kg': 3, 'coder': 1}, 'worker_success_rates': {'chat': 0.885616037725195, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.614755, 'vec_kg': 0.6355000000000001}}
+2026-06-17 16:48:43 [app.supervisor] INFO: [Supervisor] LLM 建议：vec_kg
+2026-06-17 16:48:43 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [vec_kg]
+2026-06-17 16:48:43 [app.nodes] INFO: [Worker: vec_kg] 正在执行 Milvus 向量语义检索...
+2026-06-17 16:49:04 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:49:04 [app.supervisor] INFO:   已尝试: ['vec_kg', 'graph_kg']
+2026-06-17 16:49:04 [app.supervisor] INFO:   上一步: vec_kg
+2026-06-17 16:49:04 [app.supervisor] INFO:   策略状态: {'total_turns': 50, 'worker_attempts': {'sqler': 5, 'chat': 14, 'graph_kg': 5, 'vec_kg': 4, 'coder': 1}, 'worker_success_rates': {'chat': 0.885616037725195, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.614755, 'vec_kg': 0.67195}}
+2026-06-17 16:51:13 [app.supervisor] INFO: [Supervisor] LLM 建议：chat
+2026-06-17 16:51:13 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [chat]
+2026-06-17 16:51:13 [app.nodes] INFO: [Worker: chat] 正在生成自然语言回复...
+2026-06-17 16:51:35 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:51:35 [app.supervisor] INFO:   已尝试: ['vec_kg', 'chat', 'graph_kg']
+2026-06-17 16:51:35 [app.supervisor] INFO:   上一步: chat
+2026-06-17 16:51:35 [app.supervisor] INFO:   策略状态: {'total_turns': 51, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 5, 'vec_kg': 4, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.614755, 'vec_kg': 0.67195}}
+2026-06-17 16:51:47 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:51:47 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:51:47 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:51:47 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:51:47 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:51:47 [app.supervisor] INFO:   策略状态: {'total_turns': 52, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 5, 'vec_kg': 4, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.614755, 'vec_kg': 0.67195}}
+2026-06-17 16:54:35 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:54:35 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:54:35 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 16:55:59 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:55:59 [app.supervisor] INFO:   已尝试: ['graph_kg']
+2026-06-17 16:55:59 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 16:55:59 [app.supervisor] INFO:   策略状态: {'total_turns': 53, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 6, 'vec_kg': 4, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.6532795, 'vec_kg': 0.67195}}
+2026-06-17 16:58:12 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 16:58:12 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 16:58:12 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:58:12 [app.supervisor] INFO:   已尝试: 无
+2026-06-17 16:58:12 [app.supervisor] INFO:   上一步: 无
+2026-06-17 16:58:12 [app.supervisor] INFO:   策略状态: {'total_turns': 54, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 6, 'vec_kg': 4, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.6532795, 'vec_kg': 0.67195}}
+2026-06-17 16:58:21 [app.supervisor] INFO: [Supervisor] LLM 建议：vec_kg
+2026-06-17 16:58:21 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [vec_kg]
+2026-06-17 16:58:21 [app.nodes] INFO: [Worker: vec_kg] 正在执行 Milvus 向量语义检索...
+2026-06-17 16:58:42 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 16:58:42 [app.supervisor] INFO:   已尝试: ['vec_kg']
+2026-06-17 16:58:42 [app.supervisor] INFO:   上一步: vec_kg
+2026-06-17 16:58:42 [app.supervisor] INFO:   策略状态: {'total_turns': 55, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 6, 'vec_kg': 5, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.6532795, 'vec_kg': 0.704755}}
+2026-06-17 16:59:31 [app.supervisor] INFO: [Supervisor] LLM 建议：graph_kg
+2026-06-17 16:59:31 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [graph_kg]
+2026-06-17 16:59:31 [app.nodes] INFO: [Worker: graph_kg] 正在执行 Neo4j 图知识库路径检索...
+2026-06-17 17:01:06 [app.supervisor] INFO: [Supervisor] 正在分析状态...
+2026-06-17 17:01:06 [app.supervisor] INFO:   已尝试: ['vec_kg', 'graph_kg']
+2026-06-17 17:01:06 [app.supervisor] INFO:   上一步: graph_kg
+2026-06-17 17:01:06 [app.supervisor] INFO:   策略状态: {'total_turns': 56, 'worker_attempts': {'sqler': 5, 'chat': 15, 'graph_kg': 7, 'vec_kg': 5, 'coder': 1}, 'worker_success_rates': {'chat': 0.8970544339526755, 'coder': 0.55, 'sqler': 0.704755, 'graph_kg': 0.68795155, 'vec_kg': 0.704755}}
+2026-06-17 17:01:14 [app.supervisor] INFO: [Supervisor] LLM 建议：FINISH
+2026-06-17 17:01:14 [app.supervisor] INFO: [Supervisor] 最终决策: 调度 [FINISH]
+2026-06-17 17:01:14 [__main__] INFO: Results saved to D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_results\benchmark_routing_20260617_170114.json
+============================================================
+Hybrid RAG Multi-Agent Benchmark Suite
+Dataset: dnngp
+Experiment: routing
+============================================================
+
+############################################################
+# Dataset: dnngp
+############################################################
+
+######################################################################
+  Experiment 5: Routing Accuracy
+######################################################################
+📄 开始解析PDF: DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf
+   共 15 页
+✅ 解析完成: 15段文本, 2个表格, 6张图片
+
+  [1/25] Q: 查询小米科技的总销售额...
+         Expected: sqler
+         Got: sqler | OK
+
+  [2/25] Q: 哪些客户购买了华为的产品...
+         Expected: sqler
+         Got: sqler | OK
+
+  [3/25] Q: 2024年三星的销售额是多少...
+         Expected: sqler
+         Got: sqler | OK
+
+  [4/25] Q: 比亚迪的销量排名...
+         Expected: sqler
+         Got: sqler | OK
+
+  [5/25] Q: 查询所有公司的利润率...
+         Expected: sqler
+         Got: sqler | OK
+
+  [6/25] Q: 小米有哪些技术...
+         Expected: graph_kg
+         Got: graph_kg | OK
+
+  [7/25] Q: 华为的合作伙伴有哪些...
+         Expected: graph_kg
+         Got: graph_kg | OK
+
+  [8/25] Q: 苹果在哪些地区有业务...
+         Expected: graph_kg
+         Got: graph_kg | OK
+
+  [9/25] Q: 小米和华为有什么合作...
+         Expected: graph_kg
+         Got: graph_kg | OK
+
+  [10/25] Q: 三星的产品有哪些...
+         Expected: graph_kg
+         Got: vec_kg | MISS
+
+  [11/25] Q: 什么是深度学习...
+         Expected: vec_kg
+         Got: chat | MISS
+
+  [12/25] Q: Transformer架构的原理是什么...
+         Expected: vec_kg
+         Got: chat | MISS
+
+  [13/25] Q: RAG系统有哪些优化方法...
+         Expected: vec_kg
+         Got: chat | MISS
+
+  [14/25] Q: 向量数据库的工作原理...
+         Expected: vec_kg
+         Got: chat | MISS
+
+  [15/25] Q: 什么是语义分块...
+         Expected: vec_kg
+         Got: chat | MISS
+
+  [16/25] Q: 你好...
+         Expected: chat
+         Got: chat | OK
+
+  [17/25] Q: 请总结一下前面的对话...
+         Expected: chat
+         Got: chat | OK
+
+  [18/25] Q: 谢谢你的帮助...
+         Expected: chat
+         Got: chat | OK
+
+  [19/25] Q: 再见...
+         Expected: chat
+         Got: chat | OK
+
+  [20/25] Q: 你能做什么...
+         Expected: chat
+         Got: chat | OK
+
+  [21/25] Q: 小米的快充技术和华为的5G技术哪个更厉害...
+         Expected: sqler
+         Got: chat | MISS
+
+  [22/25] Q: 对比苹果和三星的AI战略...
+         Expected: vec_kg
+         ERROR: Request timed out.
+
+  [23/25] Q: 比亚迪的合作伙伴在哪些地区...
+         Expected: graph_kg
+         Got: graph_kg | OK
+
+  [24/25] Q: 总结一下小米的技术创新...
+         Expected: chat
+         Got: graph_kg | MISS
+
+  [25/25] Q: 华为的5G技术用了什么芯片...
+         Expected: graph_kg
+         Got: vec_kg | MISS
+
+======================================================================
+  Routing Accuracy Summary
+======================================================================
+  Overall: 15/25 = 60.0%
+  Avg rounds: 2.6
+
+  Per Worker:
+    chat            5/6 = 83.3%
+    graph_kg        5/7 = 71.4%
+    sqler           5/6 = 83.3%
+    vec_kg          0/6 = 0.0%
+
+Results saved to: D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_results\benchmark_routing_20260617_170114.json
+
+Report saved to: D:\BaiduNetdiskDownload\面试项目\hybrid-rag-multi-agent\benchmark_results\benchmark_report.md
