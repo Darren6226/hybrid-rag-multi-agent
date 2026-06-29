@@ -164,9 +164,8 @@ def execute_sql(query: str):
     session = _get_session()
     try:
         from sqlalchemy import text
-        # 设置只读事务（MySQL 8.0+ 支持）
-        session.execute(text("SET TRANSACTION READ ONLY"))
-        session.commit()
+        # 启动只读事务（MySQL 8.0+ 支持）
+        session.execute(text("START TRANSACTION READ ONLY"))
         # 执行查询
         result = session.execute(text(query))
         rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
@@ -222,12 +221,11 @@ def _build_restricted_globals():
         "sorted", "reversed", "enumerate", "zip", "map", "filter",
         "list", "dict", "set", "tuple", "frozenset",
         "str", "int", "float", "bool", "complex",
-        "isinstance", "type", "hasattr", "getattr", "setattr",
+        "isinstance", "repr",
         "True", "False", "None",
         "Exception", "ValueError", "TypeError", "KeyError", "IndexError",
         "ZeroDivisionError", "AttributeError", "RuntimeError",
         "StopIteration", "NotImplemented",
-        "id", "hash", "repr", "format",
     }
     for attr in list(sb.keys()):
         if attr not in safe_builtins:

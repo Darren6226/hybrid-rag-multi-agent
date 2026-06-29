@@ -20,6 +20,7 @@ from app.database import init_seed_data
 from app.rag import init_rag
 from app.graph_builder import build_graph
 from app.stream_utils import print_stream
+from app.supervisor import reset_supervisor
 
 # 设置输出编码为 UTF-8
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -55,6 +56,7 @@ def main():
 
     # 单次提问模式
     if args.query:
+        reset_supervisor()
         print_stream(graph, args.query)
         return
 
@@ -74,6 +76,7 @@ def main():
             break
 
         print(f"\n{'=' * 60}", flush=True)
+        reset_supervisor()
         print_stream(graph, query)
         print(flush=True)
 

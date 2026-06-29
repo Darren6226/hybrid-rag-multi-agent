@@ -1,5 +1,7 @@
 import os
-from hybrid_rag_supervisor import graph
+from app.graph_builder import build_graph
+
+graph = build_graph()
 
 def draw_system_architecture():
     """
