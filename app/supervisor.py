@@ -119,14 +119,22 @@ def supervisor(state: AgentState):
         "- sqler: Handle structured data, including sales records, products, and COMPETITOR ANALYSIS (market share, regions).\n"
         "- graph_kg: Graph-based knowledge retrieval, for broad/relationship questions.\n"
         "- vec_kg: Vector-based semantic retrieval, for detailed/fine-grained questions.\n\n"
-        f"Workers already tried in this turn: {list(called_workers)}\n"
-        f"Last worker called: {last_worker or 'None'}\n"
-        "CRITICAL RULES:\n"
-        "1. If a worker's response has fully answered the request, return FINISH.\n"
-        "2. If a question involves 'market share' or 'competitors', prefer 'sqler'.\n"
-        "3. If a question involves partnerships/合作，try 'graph_kg' first, then fallback to others.\n"
-        "4. If a worker indicates it doesn't know, try other available workers.\n"
-        "5. Avoid calling the same worker twice unless specifically needed.\n"
+        "ROUTING GUIDELINES:\n\n"
+        "## Termination (highest priority — check BEFORE any dispatch decision):\n"
+        "- The request is FULLY ANSWERED when the conversation already contains concrete facts that address\n"
+        "  the user's question: specific names, numbers, dates, percentages, technical specs, model names,\n"
+        "  feature lists. Vague or placeholder answers do NOT count.\n"
+        "- A worker reply that says it lacks relevant data (e.g. \"数据库不包含\", \"暂无相关信息\",\n"
+        "  \"no relevant data\") means that worker is EXHAUSTED for this query — do NOT route back to it.\n"
+        "- Do NOT continue searching just because a worker's reply mentions that \"more details could be\n"
+        "  extracted\" or offers to drill deeper. If the core question is already answered, FINISH.\n"
+        "- After 2 or more workers have contributed complementary factual information, route to chat for\n"
+        "  a final synthesized reply, then FINISH. Do not keep searching after the synthesis.\n\n"
+        "## Worker dispatch (only if the request is NOT yet fully answered):\n"
+        "0. For entity/factual questions (介绍/是什么/有哪些), try vec_kg or graph_kg first.\n"
+        "1. For market-share / competitor questions, prefer sqler.\n"
+        "2. If a worker indicates it doesn't know or has no data, try one other worker, then route to chat.\n"
+        "3. Never call the same worker twice for the same query.\n"
     )
 
     # 添加历史错误信息
@@ -158,6 +166,39 @@ def supervisor(state: AgentState):
                 next_ = fallback
             else:
                 next_ = "FINISH"
+
+    # 4. 硬性兜底规则（不依赖 LLM 输出，防止认知偏差导致的无限循环）
+
+    # 兜底 A: 数据类 worker 中 ≥2 个已尝试且全部明确声明"没有相关数据" → 强制 chat
+    #         ("没有数据"的判断基于明确否定关键词，比判断"是否完整"可靠得多)
+    if next_ not in ("FINISH", END, "chat"):
+        _NO_DATA_KEYWORDS = ["不包含", "没有相关", "暂无", "未找到",
+                             "does not contain", "no relevant", "no information about",
+                             "数据库中不包含"]
+        data_workers_tried = called_workers & {"graph_kg", "vec_kg", "sqler"}
+        if len(data_workers_tried) >= 2:
+            all_no_data = True
+            for w in data_workers_tried:
+                content = _extract_worker_response_content(state, w)
+                if content and not any(kw in content for kw in _NO_DATA_KEYWORDS):
+                    all_no_data = False
+                    break
+            if all_no_data:
+                logger.info("[Supervisor] 兜底A: %d 个数据源均无匹配，路由到 chat",
+                            len(data_workers_tried))
+                next_ = "chat"
+
+    # 兜底 B: 全局最大轮次上限。超过 MAX_TURNS 后强制 chat → FINISH。
+    #         3 轮足以覆盖最优路径（1-2 个数据源 + 1 次 chat 融合）。
+    MAX_TURNS = 3
+    current_turn = policy_manager.state.total_turns
+    if next_ not in ("FINISH", END) and current_turn >= MAX_TURNS:
+        logger.info("[Supervisor] 兜底B: 超过最大轮次 (%d)，强制%s",
+                    MAX_TURNS, "chat" if "chat" not in called_workers else "FINISH")
+        if "chat" not in called_workers:
+            next_ = "chat"
+        else:
+            next_ = "FINISH"
 
     # 轮次递进
     policy_manager.tick()

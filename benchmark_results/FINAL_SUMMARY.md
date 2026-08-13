@@ -2,7 +2,7 @@
 
 **日期**: 2026-06-17 ~ 2026-06-19  
 **数据集**: DNNGP 基因组预测论文 + 企业知识库（小米/华为/苹果/三星/比亚迪）  
-**LLM**: DashScope qwen3.6-plus / qwen3.6-flash  
+**LLM**: DashScope qwen3.7-max  
 **Embedding**: tongyi-embedding-vision-flash
 
 ---

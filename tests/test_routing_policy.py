@@ -156,8 +156,12 @@ class TestRoutingPolicyManager:
         mgr = self._make_manager()
         mgr.record_attempt("chat", success=True)
         mgr.record_attempt("sqler", success=False, error_msg="err")
+        mgr.tick()
+        mgr.tick()
+        assert mgr.state.total_turns == 2
         mgr.reset_for_new_query()
         assert mgr.state.worker_attempts == {}
+        assert mgr.state.total_turns == 0
         # 成功率和错误历史应保留
         assert "chat" in mgr.state.worker_success_rate
 

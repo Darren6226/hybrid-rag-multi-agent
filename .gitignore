@@ -29,3 +29,19 @@ Thumbs.db
 # 评估结果（运行时生成）
 evaluation_results/
 llm_evaluation_results/
+
+# 本地运行日志与临时文件（保留本地，不上传）
+app_run.log
+app_err.log
+.rag_fingerprint
+nul;*
+
+# 本地分析/分享产物（不上传）
+resume-code-analysis/
+.trae-html-share-packages/
+
+# benchmark 运行日志（保留结果JSON，忽略日志）
+benchmark_results/*.log
+
+# 示例 PDF 文档（版权/体积，不上传）
+pdf/

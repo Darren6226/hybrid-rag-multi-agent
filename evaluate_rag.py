@@ -100,7 +100,11 @@ def build_baseline_vectorstore(embeddings):
         embedding=embeddings,
         connection_args={"host": "localhost", "port": "19530"},
         drop_old=False,
-        enable_dynamic_field=True
+        enable_dynamic_field=True,
+        index_params={
+            "metric_type": "COSINE",
+            "index_type": "AUTOINDEX",
+        },
     )
     print(f"   ✅ Baseline 向量库构建完成，共 {len(all_documents)} 个文档块")
     return vectorstore

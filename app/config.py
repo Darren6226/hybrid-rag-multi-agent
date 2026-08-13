@@ -134,7 +134,7 @@ class DashScopeEmbeddings(Embeddings):
 
 # LLM 与 Embeddings 初始化
 llm = ChatOpenAI(
-    model="qwen3.6-plus-2026-04-02",
+    model="qwen3.7-max",
     api_key=DASHSCOPE_API_KEY,
     base_url=DASHSCOPE_API_BASE,
     temperature=0,
@@ -144,16 +144,16 @@ llm = ChatOpenAI(
 # GraphRAG 使用的 LLM
 graph_llm = ChatOpenAI(
     temperature=0,
-    model="qwen3.6-plus-2026-04-02",
+    model="qwen3.7-max",
     api_key=DASHSCOPE_API_KEY,
     base_url=DASHSCOPE_API_BASE,
     request_timeout=120
 )
 
-# Supervisor 使用的 LLM（也使用 qwen3.6-plus 以支持 JSON 模式）
+# Supervisor 使用的 LLM（使用 qwen3.7-max，需支持 JSON / 结构化输出模式）
 supervisor_llm = ChatOpenAI(
     temperature=0,
-    model="qwen3.6-flash",
+    model="qwen3.7-max",
     api_key=DASHSCOPE_API_KEY,
     base_url=DASHSCOPE_API_BASE,
     request_timeout=120

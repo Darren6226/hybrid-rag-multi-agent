@@ -9,6 +9,7 @@ RAG 模块 — 懒加载设计
 import os
 import threading
 import logging
+import hashlib
 from typing import List, Optional
 
 from langchain_core.documents import Document
@@ -211,35 +212,226 @@ Cypher:"""
     )
 
 
+def _get_project_dirs():
+    """获取项目根目录、doc目录、pdf目录"""
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return current_dir, os.path.join(current_dir, "doc"), os.path.join(current_dir, "pdf")
+
+
+def _compute_doc_fingerprint() -> str:
+    """计算源文档（doc/ + pdf/）的 SHA256 指纹，包含 metric 配置"""
+    current_dir, doc_dir, pdf_dir = _get_project_dirs()
+    hasher = hashlib.sha256()
+    # 将 metric 配置写入指纹，metric 类型变更时自动触发重建
+    hasher.update("COSINE".encode("utf-8"))
+    for directory in [doc_dir, pdf_dir]:
+        if os.path.isdir(directory):
+            for filename in sorted(os.listdir(directory)):
+                filepath = os.path.join(directory, filename)
+                if os.path.isfile(filepath):
+                    hasher.update(filename.encode("utf-8"))
+                    with open(filepath, "rb") as f:
+                        hasher.update(f.read())
+    return hasher.hexdigest()
+
+
+def _load_saved_fingerprint() -> Optional[str]:
+    """读取上次保存的指纹，若不存在返回 None"""
+    current_dir, _, _ = _get_project_dirs()
+    fp_file = os.path.join(current_dir, ".rag_fingerprint")
+    if os.path.exists(fp_file):
+        with open(fp_file, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    return None
+
+
+def _save_fingerprint(fingerprint: str):
+    """保存指纹到文件"""
+    current_dir, _, _ = _get_project_dirs()
+    fp_file = os.path.join(current_dir, ".rag_fingerprint")
+    with open(fp_file, "w", encoding="utf-8") as f:
+        f.write(fingerprint)
+
+
 def _build_vectorstore(documents: List[Document]):
-    """构建 Milvus 向量索引"""
+    """构建或复用 Milvus 向量索引（根据文档指纹判断）。
+
+    包含以下健壮性措施：
+    - 文档指纹缓存：未变化时直接复用，跳过向量化
+    - 集合健康检查：加载失败时自动删除重建
+    - 30秒超时 + 最多3次重试：避免长时间卡死
+    - 清晰错误提示：告知用户如何手动修复
+    """
+    import threading
     from langchain_milvus import Milvus
     from pymilvus import connections, utility, Collection
+    from pymilvus.exceptions import MilvusException
 
-    logger.info("正在构建 Milvus 向量索引...")
+    MAX_RETRIES = 3
+    LOAD_TIMEOUT = 30  # 秒
+
+    def _safe_load_collection(coll: Collection) -> bool:
+        """安全加载集合，带超时控制，返回是否成功"""
+        result = {"success": False, "error": None}
+
+        def _load_task():
+            try:
+                coll.load()
+                result["success"] = True
+            except MilvusException as e:
+                result["error"] = str(e)
+            except Exception as e:
+                result["error"] = f"非Milvus异常: {e}"
+
+        t = threading.Thread(target=_load_task, daemon=True)
+        t.start()
+        t.join(timeout=LOAD_TIMEOUT)
+        if t.is_alive():
+            result["error"] = f"加载超时（>{LOAD_TIMEOUT}秒），集合可能残损"
+        return result
+
+    def _try_load_existing_collection(collection_name: str) -> Optional[Milvus]:
+        """尝试加载已有集合，进行健康检查"""
+        try:
+            coll = Collection(collection_name)
+            coll.release()  # 确保先释放
+            load_result = _safe_load_collection(coll)
+            if load_result["success"]:
+                logger.info("集合 %s 加载成功，状态健康", collection_name)
+                vs = Milvus(
+                    embedding=embeddings,
+                    collection_name=collection_name,
+                    connection_args={"host": "localhost", "port": "19530"},
+                    enable_dynamic_field=True,
+                )
+                logger.info("向量索引加载完成（复用模式）")
+                return vs
+            else:
+                logger.warning("集合 %s 加载失败: %s，将重建", collection_name, load_result["error"])
+                try:
+                    Collection(collection_name).drop()
+                    logger.info("残损集合已删除")
+                except Exception:
+                    pass
+                return None
+        except MilvusException as e:
+            logger.warning("集合 %s 状态异常（%s），将重建", collection_name, e)
+            try:
+                Collection(collection_name).drop()
+            except Exception:
+                pass
+            return None
+        except Exception as e:
+            logger.warning("集合 %s 健康检查失败: %s，将重建", collection_name, e)
+            try:
+                Collection(collection_name).drop()
+            except Exception:
+                pass
+            return None
+
+    def _create_and_load_collection(documents: List[Document], collection_name: str) -> Milvus:
+        """创建新集合、向量化、加载（分步执行以便控制加载超时）"""
+        logger.info("准备向量化 %d 个文档块...", len(documents))
+
+        # 步骤1：创建 collection（不自动加载），使用 COSINE 度量语义相似度
+        vs = Milvus.from_documents(
+            documents=documents,
+            collection_name=collection_name,
+            embedding=embeddings,
+            connection_args={"host": "localhost", "port": "19530"},
+            drop_old=False,
+            enable_dynamic_field=True,
+            auto_id=True,
+            index_params={
+                "metric_type": "COSINE",
+                "index_type": "AUTOINDEX",
+            },
+        )
+
+        # 步骤2：手动加载集合（使用安全加载）
+        coll = Collection(collection_name)
+        # 注：新创建的 collection 默认未加载，release() 是安全空操作
+        coll.release()
+
+        load_result = _safe_load_collection(coll)
+        if not load_result["success"]:
+            raise RuntimeError(
+                f"集合加载失败: {load_result['error']}\n"
+                f"建议：请执行以下命令修复：\n"
+                f"  docker-compose -f docker-compose-rag.yml restart milvus\n"
+                f"  确认 Docker 分配给 Milvus 的内存 >= 2GB\n"
+                f"  然后重新运行 python main.py"
+            )
+        logger.info("集合 %s 加载成功", collection_name)
+        return vs
+
+    # ---- 主逻辑 ----
+    logger.info("正在检查 Milvus 向量索引状态...")
     connections.connect("default", host="localhost", port="19530", timeout=30)
     logger.info("Milvus 默认连接已初始化")
 
     collection_name = "company_milvus"
-    try:
-        if utility.has_collection(collection_name):
-            logger.info("检测到旧集合 %s，正在删除...", collection_name)
-            Collection(collection_name).drop()
-            logger.info("旧集合已删除")
-    except Exception as cleanup_error:
-        logger.warning("清理旧集合时出错（可忽略）: %s", cleanup_error)
+    current_fingerprint = _compute_doc_fingerprint()
+    saved_fingerprint = _load_saved_fingerprint()
 
-    logger.info("准备向量化 %d 个文档块...", len(documents))
-    vs = Milvus.from_documents(
-        documents=documents,
-        collection_name=collection_name,
-        embedding=embeddings,
-        connection_args={"host": "localhost", "port": "19530"},
-        drop_old=False,
-        enable_dynamic_field=True,
+    # 情况1：集合存在 + 指纹一致 → 尝试复用
+    if utility.has_collection(collection_name):
+        if saved_fingerprint and current_fingerprint == saved_fingerprint:
+            logger.info("检测到已有集合且文档未变化，跳过向量化，直接加载集合")
+            logger.info("文档指纹: %s", current_fingerprint[:16] + "...")
+            vs = _try_load_existing_collection(collection_name)
+            if vs is not None:
+                return vs
+            # 加载失败，进入重建流程
+            logger.info("复用失败，将进入重建流程")
+        else:
+            # 指纹变化 → 删除旧集合重建
+            logger.info("检测到文档已变化（指纹不匹配），重建向量索引")
+            logger.info("  旧指纹: %s", (saved_fingerprint or "无")[:16] + "..." if saved_fingerprint else "无")
+            logger.info("  新指纹: %s", current_fingerprint[:16] + "...")
+            try:
+                Collection(collection_name).drop()
+                logger.info("旧集合已删除")
+            except Exception as cleanup_error:
+                logger.warning("删除旧集合时出错（可忽略）: %s", cleanup_error)
+    else:
+        logger.info("未检测到已有集合，将创建新集合")
+        logger.info("文档指纹: %s", current_fingerprint[:16] + "...")
+
+    # 情况2/3：新建集合 或 重建
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            vs = _create_and_load_collection(documents, collection_name)
+            _save_fingerprint(current_fingerprint)
+            logger.info("向量索引构建完成，共 %d 个文档块", len(documents))
+            logger.info("文档指纹已保存: %s", current_fingerprint[:16] + "...")
+            return vs
+        except Exception as e:
+            last_error = e
+            logger.warning("第 %d/%d 次尝试失败: %s", attempt, MAX_RETRIES, e)
+            if attempt < MAX_RETRIES:
+                logger.info("正在重试...")
+                try:
+                    if utility.has_collection(collection_name):
+                        Collection(collection_name).drop()
+                    connections.disconnect("default")
+                    connections.connect("default", host="localhost", port="19530", timeout=30)
+                except Exception:
+                    pass
+
+    # 所有重试均失败
+    error_msg = (
+        f"向量索引构建失败（已重试 {MAX_RETRIES} 次）\n"
+        f"最后错误: {last_error}\n"
+        f"\n"
+        f"请执行以下命令修复：\n"
+        f"  1. docker-compose -f docker-compose-rag.yml restart milvus\n"
+        f"  2. 确认 Docker 分配给 Milvus 的内存 >= 2GB\n"
+        f"  3. 删除残留数据（可选）: docker-compose -f docker-compose-rag.yml down -v\n"
+        f"  4. 重新运行: python main.py\n"
     )
-    logger.info("向量索引构建完成，共 %d 个文档块", len(documents))
-    return vs
+    raise RuntimeError(error_msg)
 
 
 # ============================================================
@@ -263,6 +455,72 @@ def init_rag(force: bool = False):
         logger.info("RAG 系统初始化开始")
         logger.info("=" * 50)
 
+        # ===== 提前检查向量索引状态 =====
+        collection_name = "company_milvus"
+
+        # 先连接 Milvus
+        from pymilvus import connections, utility, Collection
+        logger.info("正在检查 Milvus 向量索引状态...")
+        connections.connect("default", host="localhost", port="19530", timeout=30)
+        logger.info("Milvus 默认连接已初始化")
+
+        # 计算指纹
+        current_fingerprint = _compute_doc_fingerprint()
+        saved_fingerprint = _load_saved_fingerprint()
+
+        # 情况1：集合存在 + 指纹一致 → 尝试复用，直接加载，无需文档加载
+        if utility.has_collection(collection_name):
+            if saved_fingerprint and current_fingerprint == saved_fingerprint:
+                logger.info("检测到已有集合且文档未变化，跳过文档加载，直接加载集合")
+                logger.info("文档指纹: %s", current_fingerprint[:16] + "...")
+                from langchain_milvus import Milvus
+                try:
+                    # 加载向量索引
+                    coll = Collection(collection_name)
+                    coll.release()
+                    coll.load()
+                    vs = Milvus(
+                        embedding_function=embeddings,
+                        collection_name=collection_name,
+                        connection_args={"host": "localhost", "port": "19530"},
+                        enable_dynamic_field=True,
+                    )
+                    vectorstore = vs
+                    logger.info("向量索引加载完成（复用模式）")
+
+                    # === Neo4j / 图索引 复用部分 ===
+                    from langchain_community.graphs import Neo4jGraph
+                    graph_conn = Neo4jGraph(
+                        url=NEO4J_URL, username="neo4j", password="password", database="neo4j"
+                    )
+                    logger.info("Neo4j 连接成功")
+                    graph = graph_conn
+
+                    existing = graph_conn.query("MATCH (n) RETURN count(n) as cnt")
+                    if existing and existing[0].get("cnt", 0) > 0:
+                        logger.info("Neo4j 已有 %d 个节点，跳过图索引构建", existing[0]["cnt"])
+                        cypher_chain = _build_cypher_chain(graph_conn)
+                        logger.info("Cypher Chain 构建成功")
+
+                    _initialized = True
+                    logger.info("=" * 50)
+                    logger.info("RAG 系统初始化完成（复用模式）")
+                    logger.info("=" * 50)
+                    return
+                except Exception:
+                    logger.info("复用失败，将进入重建流程")
+            else:
+                # 指纹变化或无保存指纹 → 删除旧集合重建
+                logger.info("检测到文档已变化（指纹不匹配）或无保存指纹，将重建向量索引")
+                try:
+                    Collection(collection_name).drop()
+                    logger.info("旧集合已删除")
+                except Exception as cleanup_error:
+                    logger.warning("删除旧集合时出错（可忽略）: %s", cleanup_error)
+        else:
+            logger.info("未检测到已有集合，将创建新集合")
+
+        # ===== 情况2/3：新建集合 或 重建 - 先加载文档 =====
         # 1. 加载文档
         all_documents = _load_documents()
         processed_documents = all_documents
@@ -300,13 +558,9 @@ def init_rag(force: bool = False):
             except Exception as e:
                 logger.error("Cypher Chain 构建失败: %s", e)
 
-        # 4. 向量索引
+        # 4. 向量索引构建（需要文档才能够重建）
         if all_documents:
-            try:
-                vectorstore = _build_vectorstore(all_documents)
-            except Exception as e:
-                logger.error("向量索引构建失败: %s", e, exc_info=True)
-                vectorstore = None
+            vectorstore = _build_vectorstore(all_documents)
         else:
             logger.warning("无文档，跳过向量索引构建")
 
@@ -321,19 +575,15 @@ def init_rag(force: bool = False):
 # ============================================================
 
 def get_vectorstore():
-    """获取向量存储（首次调用时自动初始化；若构建失败则重试）"""
+    """获取向量存储（首次调用时自动初始化）"""
     global vectorstore
     if not _initialized:
         init_rag()
-    if vectorstore is None and _initialized:
-        # 向量索引构建曾失败，尝试单独重建
-        logger.warning("向量存储为 None，尝试重新构建...")
-        if processed_documents:
-            try:
-                vectorstore = _build_vectorstore(processed_documents)
-                logger.info("向量存储重建成功")
-            except Exception as e:
-                logger.error("向量存储重建失败: %s", e, exc_info=True)
+    if vectorstore is None:
+        raise RuntimeError(
+            "向量存储初始化失败，请在启动日志中查看具体错误原因，"
+            "修复后重新运行 python main.py"
+        )
     return vectorstore
 
 

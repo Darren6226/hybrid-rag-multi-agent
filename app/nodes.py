@@ -1,6 +1,6 @@
 import logging
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -113,5 +113,37 @@ def vec_kg_node(state: AgentState):
 
 def chat_node(state: AgentState):
     logger.info("[Worker: chat] 正在生成自然语言回复...")
-    model_response = llm.invoke(state["messages"])
+
+    # 检查是否有数据源 Worker 的输出（区分融合场景 vs 普通对话）
+    _DATA_WORKERS = {"sqler", "graph_kg", "vec_kg"}
+    data_sources_present = any(
+        getattr(msg, "name", None) in _DATA_WORKERS
+        for msg in state["messages"]
+    )
+
+    if data_sources_present:
+        # 融合场景：多源信息合成
+        system_prompt = (
+            "你是一个信息融合助手。以下对话历史中包含来自不同数据源的检索结果，"
+            "请综合所有信息，给出完整、准确的回答。\n\n"
+            "数据源说明：\n"
+            "- name='sqler' 的消息来自 MySQL 结构化数据库（销售额、产品、客户等）\n"
+            "- name='graph_kg' 的消息来自 Neo4j 知识图谱（实体关系、合作伙伴等）\n"
+            "- name='vec_kg' 的消息来自 Milvus 向量文档库（技术细节、文档描述等）\n\n"
+            "融合规则：\n"
+            "1. 综合所有数据源的信息，不要遗漏任何相关内容\n"
+            "2. 如果不同数据源的信息互补，将它们有机整合为连贯的回答\n"
+            "3. 如果不同数据源的信息冲突，以结构化数据(sqler)为准，并注明差异\n"
+            "4. 如果某数据源返回了'无数据'或'未找到'，忽略该部分，基于可用信息回答\n"
+            "5. 回答使用中文，保持简洁有条理"
+        )
+    else:
+        # 普通对话场景：无数据源信息（如问候、闲聊）
+        system_prompt = (
+            "你是一个友好的对话助手。请根据对话历史自然地回应用户。"
+            "如果没有足够的信息，请坦诚告知。使用中文回答。"
+        )
+
+    messages = [SystemMessage(content=system_prompt)] + list(state["messages"])
+    model_response = llm.invoke(messages)
     return {"messages": [HumanMessage(content=model_response.content, name="chat")]}

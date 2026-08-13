@@ -264,6 +264,10 @@ def build_vectorstore(documents: list, collection_suffix: str):
         connection_args={"host": "localhost", "port": "19530"},
         drop_old=False,
         enable_dynamic_field=True,
+        index_params={
+            "metric_type": "COSINE",
+            "index_type": "AUTOINDEX",
+        },
     )
     log.info(
         "Built vectorstore collection '%s' with %d documents",

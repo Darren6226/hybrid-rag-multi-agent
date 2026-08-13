@@ -148,6 +148,7 @@ class RoutingPolicyManager:
     def reset_for_new_query(self):
         """为新问题重置部分状态"""
         self.state.worker_attempts.clear()
+        self.state.total_turns = 0
         # 保留成功率和历史错误用于学习
 
     def get_routing_summary(self) -> Dict:

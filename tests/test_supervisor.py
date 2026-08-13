@@ -99,6 +99,111 @@ class TestAnalyzeResponseQuality:
         assert success is True
 
 
+class TestSupervisorSafeguards:
+    """测试硬性兜底规则"""
+
+    @patch("app.supervisor.supervisor_llm")
+    def test_max_turns_forces_chat_when_chat_not_called(self, mock_llm):
+        """超过 MAX_TURNS 且 chat 未调用 → 强制 chat"""
+        mock_structured = MagicMock()
+        mock_structured.invoke.return_value = {"next": "vec_kg"}
+        mock_llm.with_structured_output.return_value = mock_structured
+
+        # 模拟 3 轮后: graph_kg → vec_kg → sqler 都已调用
+        state = {
+            "messages": [
+                HumanMessage(content="问题"),
+                AIMessage(content="graph 回答", name="graph_kg"),
+                AIMessage(content="vec 回答", name="vec_kg"),
+                AIMessage(content="sqler 回答", name="sqler"),
+            ]
+        }
+        # 手动设 total_turns 为 MAX_TURNS(3)
+        from app.supervisor import policy_manager
+        policy_manager.state.total_turns = 3
+
+        result = supervisor(state)
+        assert result["next"] == "chat"  # chat 还没调用过
+
+    @patch("app.supervisor.supervisor_llm")
+    def test_max_turns_forces_finish_when_chat_already_called(self, mock_llm):
+        """超过 MAX_TURNS 且 chat 已调用 → 强制 FINISH"""
+        mock_structured = MagicMock()
+        mock_structured.invoke.return_value = {"next": "vec_kg"}
+        mock_llm.with_structured_output.return_value = mock_structured
+
+        state = {
+            "messages": [
+                HumanMessage(content="问题"),
+                AIMessage(content="vec 回答", name="vec_kg"),
+                AIMessage(content="sqler 回答", name="sqler"),
+                AIMessage(content="chat 回答", name="chat"),
+                AIMessage(content="vec 二次回答", name="vec_kg"),
+            ]
+        }
+        policy_manager.state.total_turns = 3
+
+        result = supervisor(state)
+        assert result["next"] == END
+
+    @patch("app.supervisor.supervisor_llm")
+    def test_all_data_workers_no_data_forces_chat(self, mock_llm):
+        """graph_kg 和 vec_kg 都说没有数据 → 兜底A 强制 chat"""
+        mock_structured = MagicMock()
+        mock_structured.invoke.return_value = {"next": "sqler"}
+        mock_llm.with_structured_output.return_value = mock_structured
+
+        state = {
+            "messages": [
+                HumanMessage(content="问题"),
+                AIMessage(content="数据库中不包含相关技术细节信息", name="sqler"),
+                AIMessage(content="文档中没有相关信息", name="vec_kg"),
+                AIMessage(content="知识图谱中未找到相关信息", name="graph_kg"),
+            ]
+        }
+
+        result = supervisor(state)
+        assert result["next"] == "chat"
+
+    @patch("app.supervisor.supervisor_llm")
+    def test_single_data_worker_no_data_does_not_trigger_safeguard_a(self, mock_llm):
+        """只有一个数据源说没有数据 → 兜底A 不触发"""
+        mock_structured = MagicMock()
+        mock_structured.invoke.return_value = {"next": "graph_kg"}
+        mock_llm.with_structured_output.return_value = mock_structured
+
+        state = {
+            "messages": [
+                HumanMessage(content="问题"),
+                AIMessage(content="数据库中不包含相关信息", name="sqler"),
+            ]
+        }
+
+        result = supervisor(state)
+        # 兜底A 不触发（只有 1 个数据源说没数据），LLM 决策生效
+        assert result["next"] == "graph_kg"
+
+    @patch("app.supervisor.supervisor_llm")
+    def test_no_data_keyword_detection(self, mock_llm):
+        """验证各种"没有数据"表述都能被兜底A识别"""
+        mock_structured = MagicMock()
+        mock_structured.invoke.return_value = {"next": "vec_kg"}
+        mock_llm.with_structured_output.return_value = mock_structured
+
+        # vec_kg 和 sqler 各用一种"没有数据"的表述
+        state = {
+            "messages": [
+                HumanMessage(content="问题"),
+                AIMessage(content="文档中暂无此类信息", name="vec_kg"),
+                AIMessage(content="does not contain any data about this", name="sqler"),
+            ]
+        }
+
+        result = supervisor(state)
+        # 两个都说没数据 → 强制 chat
+        assert result["next"] == "chat"
+
+
 class TestSupervisorRouting:
     """测试 Supervisor 路由决策"""
 
