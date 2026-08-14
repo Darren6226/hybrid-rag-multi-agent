@@ -45,3 +45,6 @@ benchmark_results/*.log
 
 # 示例 PDF 文档（版权/体积，不上传）
 pdf/
+
+# docs 文档目录（本地保留，不上传）
+docs/
