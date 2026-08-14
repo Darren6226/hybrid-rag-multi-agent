@@ -40,8 +40,14 @@ nul;*
 resume-code-analysis/
 .trae-html-share-packages/
 
-# benchmark 运行日志（保留结果JSON，忽略日志）
+# benchmark 运行日志（保留本地，不上传）
 benchmark_results/*.log
+
+# benchmark 结果与测试数据（本地保留，不上传）
+benchmark_results/*.md
+benchmark_results/*.json
+benchmark_data/
+evaluation_test_data/
 
 # 示例 PDF 文档（版权/体积，不上传）
 pdf/
