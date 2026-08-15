@@ -18,7 +18,7 @@ LangGraph · LangChain · DashScope（Qwen3.7-max）· MySQL · Neo4j · Milvus 
 
 - 最优配置（语义元数据分块 + 纯向量检索 + qwen3-rerank 重排序）RAGAS 综合得分 **0.9139**，路由准确率 **96%**
 - 重排序使 Context Precision 从 0.7687 提升至 0.9064（**+17.9%**）
-- 79 个 pytest 单元测试覆盖路由策略与工具安全
+- 84 个 pytest 单元测试覆盖路由策略与工具安全（全部 mock，无需 API Key 即可运行）
 
 ## 系统架构
 

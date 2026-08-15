@@ -8,6 +8,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+# 单元测试全部使用 mock，无需真实 API Key；
+# 提供占位值，避免导入 app 模块时 LLM 客户端初始化失败
+os.environ.setdefault("DASHSCOPE_API_KEY", "sk-test-placeholder")
+
 # 确保项目根目录在 sys.path 中
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
