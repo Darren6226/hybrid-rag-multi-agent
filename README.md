@@ -125,9 +125,6 @@ hybrid-rag-multi-agent/
 │   └── evaluation.py       #   评估工具
 ├── tests/                  # pytest 单元测试
 ├── benchmark.py            # 基准测试脚本
-├── benchmark_data/         # 测试数据
-├── benchmark_results/      # 评估结果（含 FINAL_SUMMARY）
-├── docs/                   # 项目文档
 ├── docker-compose-rag.yml  # 基础设施编排
 └── requirements.txt
 ```

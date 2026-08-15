@@ -6,7 +6,10 @@ dist/
 build/
 *.egg
 
-# 环境
+# 日志
+*.log
+
+# 环境变量
 .env
 .venv/
 venv/
@@ -18,7 +21,7 @@ env/
 *.swp
 *.swo
 
-# OMC 工具目录
+# 工具目录
 .omc/
 .claude/
 
@@ -26,31 +29,6 @@ env/
 .DS_Store
 Thumbs.db
 
-# 评估结果（运行时生成）
+# 运行时生成目录
 evaluation_results/
 llm_evaluation_results/
-
-# 本地运行日志与临时文件（保留本地，不上传）
-app_run.log
-app_err.log
-.rag_fingerprint
-nul;*
-
-# 本地分析/分享产物（不上传）
-resume-code-analysis/
-.trae-html-share-packages/
-
-# benchmark 运行日志（保留本地，不上传）
-benchmark_results/*.log
-
-# benchmark 结果与测试数据（本地保留，不上传）
-benchmark_results/*.md
-benchmark_results/*.json
-benchmark_data/
-evaluation_test_data/
-
-# 示例 PDF 文档（版权/体积，不上传）
-pdf/
-
-# docs 文档目录（本地保留，不上传）
-docs/
