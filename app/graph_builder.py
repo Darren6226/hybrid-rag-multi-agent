@@ -68,6 +68,8 @@ def build_graph(skip_graph_kg: bool = False):
 
     # 每个子代理完成后向 supervisor 汇报
     for member in members:
+        if skip_graph_kg and member == "graph_kg":
+            continue
         builder.add_edge(member, "supervisor")
 
     builder.add_edge(START, "supervisor")

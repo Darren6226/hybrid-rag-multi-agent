@@ -52,7 +52,7 @@ services:
       - "minio"
     ports:
       - "19530:19530"
-      - "9091:9091"
+      # - "9091:9091"  # metrics 端口默认不映射：Windows Hyper-V 动态保留端口范围内会绑定失败
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
