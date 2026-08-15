@@ -137,4 +137,4 @@ pytest tests/ -v
 
 ## 许可证
 
-学习演示项目
+[MIT](LICENSE)
