@@ -16,7 +16,8 @@ from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.config import graph_llm, llm, embeddings, NEO4J_URL, MILVUS_URI
+from app.config import (graph_llm, llm, embeddings, NEO4J_URL, MILVUS_URI,
+                        NEO4J_USERNAME, NEO4J_PASSWORD, MILVUS_HOST, MILVUS_PORT)
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +53,8 @@ def _load_documents() -> List[Document]:
 
     current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     company_txt_path = os.path.normpath(os.path.join(current_dir, "doc", "company.txt"))
-    dnngp_pdf_path = os.path.normpath(os.path.join(
-        current_dir, "pdf",
-        "DNNGP, a deep neural network-based method for genomic prediction using multi-omics data in plants(简短版）.pdf"
-    ))
+    pdf_dir = os.path.normpath(os.path.join(current_dir, "pdf"))
+    pdf_paths = sorted(glob.glob(os.path.join(pdf_dir, "*.pdf")))
 
     logger.info("启动增强文档分块系统...")
     logger.info("策略：语义分块 + 元信息增强 | 参数：max_chunk_size=400, min_chunk_size=200, breakpoint_threshold=92")
@@ -77,42 +76,43 @@ def _load_documents() -> List[Document]:
     else:
         logger.warning("找不到企业文档 %s", company_txt_path)
 
-    # --- DNNGP 论文 ---
-    dnngp_documents: List[Document] = []
-    if os.path.exists(dnngp_pdf_path):
-        logger.info("处理学术论文文档：%s", dnngp_pdf_path)
+    # --- PDF 文档（pdf/ 目录下所有 PDF） ---
+    pdf_documents: List[Document] = []
+    if not pdf_paths:
+        logger.warning("pdf/ 目录下未找到 PDF 文档（%s）", pdf_dir)
+    for pdf_path in pdf_paths:
+        logger.info("处理 PDF 文档：%s", pdf_path)
         try:
             if MULTIMODAL_SUPPORT:
                 logger.info("使用多模态 PDF 解析器...")
                 parser = MultimodalPDFParser(enable_ocr=False, min_image_size=100)
-                doc = parser.parse(dnngp_pdf_path)
+                doc = parser.parse(pdf_path)
                 multimodal_chunks = doc.to_chunks(chunk_size=500, chunk_overlap=50)
                 for chunk in multimodal_chunks:
                     metadata = {
-                        "source": dnngp_pdf_path,
+                        "source": pdf_path,
                         "page": chunk["metadata"].get("page", 0),
                         "content_type": chunk["content_type"],
                         **{k: v for k, v in chunk["metadata"].items()
                            if k not in ("source", "page", "content_type")},
                     }
-                    dnngp_documents.append(Document(page_content=chunk["content"], metadata=metadata))
-                logger.info("多模态解析完成，生成 %d 个文档块", len(dnngp_documents))
+                    pdf_documents.append(Document(page_content=chunk["content"], metadata=metadata))
+                logger.info("多模态解析完成，累计生成 %d 个文档块", len(pdf_documents))
             else:
                 logger.info("使用传统 PDF 提取器...")
                 pdf_extractor = PDFExtractor(enable_tables=False)
-                pdf_text, pdf_metadata = pdf_extractor.extract_text(dnngp_pdf_path, method="auto")
+                pdf_text, pdf_metadata = pdf_extractor.extract_text(pdf_path, method="auto")
                 logger.info("PDF 提取完成，方法：%s，文本长度：%d 字符",
                             pdf_metadata["extraction_method"], len(pdf_text))
-                dnngp_documents = enhanced_chunker.chunk_document(pdf_text, dnngp_pdf_path)
-                logger.info("学术论文增强分块完成，生成 %d 个文档块", len(dnngp_documents))
+                chunked_docs = enhanced_chunker.chunk_document(pdf_text, pdf_path)
+                pdf_documents.extend(chunked_docs)
+                logger.info("PDF 增强分块完成，本文件生成 %d 个文档块", len(chunked_docs))
         except Exception as e:
             logger.error("PDF 处理失败: %s", e, exc_info=True)
-    else:
-        logger.warning("找不到学术论文 %s", dnngp_pdf_path)
 
-    all_documents = company_documents + dnngp_documents
-    logger.info("总计文档块数: %d (企业:%d, DNNGP:%d)",
-                len(all_documents), len(company_documents), len(dnngp_documents))
+    all_documents = company_documents + pdf_documents
+    logger.info("总计文档块数: %d (企业:%d, PDF:%d)",
+                len(all_documents), len(company_documents), len(pdf_documents))
     return all_documents
 
 
@@ -301,7 +301,7 @@ def _build_vectorstore(documents: List[Document]):
                 vs = Milvus(
                     embedding=embeddings,
                     collection_name=collection_name,
-                    connection_args={"host": "localhost", "port": "19530"},
+                    connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT},
                     enable_dynamic_field=True,
                 )
                 logger.info("向量索引加载完成（复用模式）")
@@ -338,7 +338,7 @@ def _build_vectorstore(documents: List[Document]):
             documents=documents,
             collection_name=collection_name,
             embedding=embeddings,
-            connection_args={"host": "localhost", "port": "19530"},
+            connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT},
             drop_old=False,
             enable_dynamic_field=True,
             auto_id=True,
@@ -367,7 +367,7 @@ def _build_vectorstore(documents: List[Document]):
 
     # ---- 主逻辑 ----
     logger.info("正在检查 Milvus 向量索引状态...")
-    connections.connect("default", host="localhost", port="19530", timeout=30)
+    connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
     logger.info("Milvus 默认连接已初始化")
 
     collection_name = "company_milvus"
@@ -416,7 +416,7 @@ def _build_vectorstore(documents: List[Document]):
                     if utility.has_collection(collection_name):
                         Collection(collection_name).drop()
                     connections.disconnect("default")
-                    connections.connect("default", host="localhost", port="19530", timeout=30)
+                    connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
                 except Exception:
                     pass
 
@@ -461,7 +461,7 @@ def init_rag(force: bool = False):
         # 先连接 Milvus
         from pymilvus import connections, utility, Collection
         logger.info("正在检查 Milvus 向量索引状态...")
-        connections.connect("default", host="localhost", port="19530", timeout=30)
+        connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
         logger.info("Milvus 默认连接已初始化")
 
         # 计算指纹
@@ -482,7 +482,7 @@ def init_rag(force: bool = False):
                     vs = Milvus(
                         embedding_function=embeddings,
                         collection_name=collection_name,
-                        connection_args={"host": "localhost", "port": "19530"},
+                        connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT},
                         enable_dynamic_field=True,
                     )
                     vectorstore = vs
@@ -491,7 +491,7 @@ def init_rag(force: bool = False):
                     # === Neo4j / 图索引 复用部分 ===
                     from langchain_community.graphs import Neo4jGraph
                     graph_conn = Neo4jGraph(
-                        url=NEO4J_URL, username="neo4j", password="password", database="neo4j"
+                        url=NEO4J_URL, username=NEO4J_USERNAME, password=NEO4J_PASSWORD, database="neo4j"
                     )
                     logger.info("Neo4j 连接成功")
                     graph = graph_conn
@@ -533,7 +533,7 @@ def init_rag(force: bool = False):
         graph_conn = None
         try:
             from langchain_community.graphs import Neo4jGraph
-            graph_conn = Neo4jGraph(url=NEO4J_URL, username="neo4j", password="password", database="neo4j")
+            graph_conn = Neo4jGraph(url=NEO4J_URL, username=NEO4J_USERNAME, password=NEO4J_PASSWORD, database="neo4j")
             logger.info("Neo4j 连接成功")
         except Exception as e:
             logger.error("Neo4j 连接失败: %s", e)

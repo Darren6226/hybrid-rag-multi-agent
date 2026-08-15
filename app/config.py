@@ -188,7 +188,12 @@ if SENSENOVA_API_KEY:
         temperature=0
     )
 
-# 数据库配置
-DATABASE_URI = 'mysql+pymysql://root:root@localhost:5306/langgraph?charset=utf8mb4'
-NEO4J_URL = 'bolt://localhost:17687'
-MILVUS_URI = "http://localhost:19530"
+# 数据库配置（支持环境变量覆盖，默认值与 docker-compose-rag.yml 端口映射一致）
+DATABASE_URI = os.getenv(
+    "DATABASE_URI", 'mysql+pymysql://root:root@localhost:5306/langgraph?charset=utf8mb4')
+NEO4J_URL = os.getenv("NEO4J_URL", 'bolt://localhost:17687')
+NEO4J_USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
+MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
+MILVUS_HOST = os.getenv("MILVUS_HOST", "localhost")
+MILVUS_PORT = os.getenv("MILVUS_PORT", "19530")

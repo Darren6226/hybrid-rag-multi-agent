@@ -240,7 +240,7 @@ def build_vectorstore(documents: list, collection_suffix: str):
     """
     from langchain_milvus import Milvus
     from pymilvus import connections, utility, Collection
-    from app.config import embeddings
+    from app.config import embeddings, MILVUS_HOST, MILVUS_PORT
 
     log = _get_logger()
     collection_name = f"benchmark_{collection_suffix}"
@@ -249,7 +249,7 @@ def build_vectorstore(documents: list, collection_suffix: str):
     documents = _split_oversized_chunks(documents)
 
     # Connect to Milvus
-    connections.connect("default", host="localhost", port="19530", timeout=30)
+    connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
 
     # Drop old collection if it exists
     if utility.has_collection(collection_name):
@@ -261,7 +261,7 @@ def build_vectorstore(documents: list, collection_suffix: str):
         documents=documents,
         collection_name=collection_name,
         embedding=embeddings,
-        connection_args={"host": "localhost", "port": "19530"},
+        connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT},
         drop_old=False,
         enable_dynamic_field=True,
         index_params={
@@ -282,8 +282,9 @@ def cleanup_collection(collection_name: str):
     log = _get_logger()
     try:
         from pymilvus import connections, utility, Collection
+        from app.config import MILVUS_HOST, MILVUS_PORT
 
-        connections.connect("default", host="localhost", port="19530", timeout=30)
+        connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
         if utility.has_collection(collection_name):
             Collection(collection_name).drop()
             log.info("Cleaned up collection: %s", collection_name)

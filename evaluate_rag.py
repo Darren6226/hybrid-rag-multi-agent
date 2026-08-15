@@ -89,7 +89,9 @@ def build_baseline_vectorstore(embeddings):
         raise RuntimeError("无文档可索引")
 
     # 构建 Milvus 向量库
-    connections.connect("default", host="localhost", port="19530", timeout=30)
+    from app.config import MILVUS_HOST, MILVUS_PORT
+
+    connections.connect("default", host=MILVUS_HOST, port=MILVUS_PORT, timeout=30)
     collection_name = "baseline_milvus"
     if utility.has_collection(collection_name):
         Collection(collection_name).drop()
@@ -98,7 +100,7 @@ def build_baseline_vectorstore(embeddings):
         documents=all_documents,
         collection_name=collection_name,
         embedding=embeddings,
-        connection_args={"host": "localhost", "port": "19530"},
+        connection_args={"host": MILVUS_HOST, "port": MILVUS_PORT},
         drop_old=False,
         enable_dynamic_field=True,
         index_params={
