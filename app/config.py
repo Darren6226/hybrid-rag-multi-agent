@@ -141,13 +141,13 @@ llm = ChatOpenAI(
     request_timeout=120
 )
 
-# GraphRAG 使用的 LLM
+# GraphRAG 使用的 LLM（实体关系抽取用 qwen3.7-plus 足够，比 max 快数倍）
 graph_llm = ChatOpenAI(
     temperature=0,
-    model="qwen3.7-max",
+    model="qwen3.7-plus",
     api_key=DASHSCOPE_API_KEY,
     base_url=DASHSCOPE_API_BASE,
-    request_timeout=120
+    request_timeout=200
 )
 
 # Supervisor 使用的 LLM（使用 qwen3.7-max，需支持 JSON / 结构化输出模式）

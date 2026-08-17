@@ -17,13 +17,15 @@ from app.nodes import sqler_node, coder_node, graph_kg_node, vec_kg_node, chat_n
 logger = logging.getLogger(__name__)
 
 
-def build_graph(skip_graph_kg: bool = False):
+def build_graph(skip_graph_kg: bool = False, use_checkpointer: bool = False):
     """
     构建并编译多代理 StateGraph。
 
     Args:
         skip_graph_kg: 若为 True，将 graph_kg 路由重定向到 vec_kg
                        （用于快速启动模式，跳过 Neo4j 图索引构建）
+        use_checkpointer: 若为 True，附加 MemorySaver checkpointer，
+                       支持 thread_id 级别的多轮对话状态持久化（供 API 使用）
 
     Returns:
         编译好的 CompiledGraph
@@ -74,6 +76,12 @@ def build_graph(skip_graph_kg: bool = False):
 
     builder.add_edge(START, "supervisor")
 
-    graph = builder.compile()
-    logger.info("LangGraph 编排图已构建 (skip_graph_kg=%s)", skip_graph_kg)
+    if use_checkpointer:
+        from langgraph.checkpoint.memory import MemorySaver
+        graph = builder.compile(checkpointer=MemorySaver())
+        logger.info("LangGraph 编排图已构建 (skip_graph_kg=%s, checkpointer=MemorySaver)",
+                    skip_graph_kg)
+    else:
+        graph = builder.compile()
+        logger.info("LangGraph 编排图已构建 (skip_graph_kg=%s)", skip_graph_kg)
     return graph

@@ -5,7 +5,8 @@
 """
 
 import logging
-from typing import Generator
+import uuid
+from typing import Generator, Optional
 
 from app.rag import init_rag
 from app.graph_builder import build_graph
@@ -24,23 +25,32 @@ def get_compiled_graph():
     global _compiled_graph
     if _compiled_graph is None:
         init_rag()  # 确保 RAG 系统已初始化
-        _compiled_graph = build_graph()
+        _compiled_graph = build_graph(use_checkpointer=True)  # MemorySaver 支持多轮对话
         logger.info("LangGraph 编排图已构建")
     return _compiled_graph
 
 
-def chat_stream(query: str) -> Generator[dict, None, None]:
+def chat_stream(query: str, session_id: Optional[str] = None) -> Generator[dict, None, None]:
     """
     流式处理用户查询，逐节点产出事件。
+
+    Args:
+        query: 用户问题
+        session_id: 会话 ID。传入相同值时，LangGraph checkpointer 按 thread_id
+                    恢复历史消息，实现多轮对话；不传时生成随机 ID（单轮无状态）
 
     Yields:
         {"node": str, "content": str, "done": bool}
     """
     graph = get_compiled_graph()
-    reset_supervisor()  # 重置路由状态
+    reset_supervisor()  # 重置路由状态（worker_attempts/total_turns），历史消息由 checkpointer 保留
 
-    logger.info("开始处理查询: %s", query)
-    yield from sse_stream(graph, query)
+    # 路由状态按轮重置，对话历史按 thread_id 持久化 —— 两层状态职责分离
+    thread_id = session_id or str(uuid.uuid4())
+    config = {"configurable": {"thread_id": thread_id}}
+
+    logger.info("开始处理查询: %s (thread_id=%s)", query, thread_id)
+    yield from sse_stream(graph, query, config)
 
 
 def check_health() -> dict:

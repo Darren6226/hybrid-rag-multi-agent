@@ -56,7 +56,7 @@ async def chat(request: ChatRequest):
     """
 
     def event_generator():
-        for event in chat_stream(request.query):
+        for event in chat_stream(request.query, request.session_id):
             yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(

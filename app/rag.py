@@ -7,6 +7,7 @@ RAG 模块 — 懒加载设计
 """
 
 import os
+import glob
 import threading
 import logging
 import hashlib
@@ -116,30 +117,59 @@ def _load_documents() -> List[Document]:
     return all_documents
 
 
-def _build_graph_index(graph_conn, txt_documents: List[Document]) -> list:
-    """对 TXT 文档构建 Neo4j 图索引，返回 graph_documents 列表"""
-    from langchain_experimental.graph_transformers import LLMGraphTransformer
+_GRAPH_MAX_WORKERS = 5
+_GRAPH_TOTAL_BUDGET = 300
 
-    logger.info("正在构建图知识库索引... (仅处理 %d 个 TXT 文档块)", len(txt_documents))
+
+def _build_graph_index(graph_conn, txt_documents: List[Document]) -> list:
+    """对 TXT 文档并行构建 Neo4j 图索引，返回 graph_documents 列表
+
+    多文档并发处理（max_workers=5），单文档 LLM 调用超时由 graph_llm.request_timeout 兜底。
+    某文档超时或失败不影响其他文档，不阻塞后续向量索引构建。
+    """
+    from langchain_experimental.graph_transformers import LLMGraphTransformer
+    from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FutureTimeout
+    import time
+
+    logger.info("正在构建图知识库索引... (并行 %d 个文档块, max_workers=%d)",
+                len(txt_documents), _GRAPH_MAX_WORKERS)
     graph_transformer = LLMGraphTransformer(llm=graph_llm, ignore_tool_usage=True)
 
-    batch_size = 10
     all_graph_documents = []
-    for i in range(0, len(txt_documents), batch_size):
-        batch = txt_documents[i : i + batch_size]
-        batch_num = i // batch_size + 1
-        total_batches = (len(txt_documents) + batch_size - 1) // batch_size
-        logger.info("处理批次 %d/%d (TXT文档块 %d-%d)...",
-                     batch_num, total_batches, i + 1, min(i + batch_size, len(txt_documents)))
-        try:
-            gd = graph_transformer.convert_to_graph_documents(batch)
-            all_graph_documents.extend(gd)
-            graph_conn.add_graph_documents(gd)
-            logger.info("批次完成，提取 %d 个图文档", len(gd))
-        except Exception as e:
-            logger.warning("批次处理失败: %s，跳过此批次", e)
+    processed = 0
+    total_start = time.time()
 
-    logger.info("图索引构建完成！图文档数: %d", len(all_graph_documents))
+    def _process_doc(doc):
+        return graph_transformer.convert_to_graph_documents([doc])
+
+    executor = ThreadPoolExecutor(max_workers=_GRAPH_MAX_WORKERS)
+    future_to_idx = {
+        executor.submit(_process_doc, doc): idx
+        for idx, doc in enumerate(txt_documents, 1)
+    }
+
+    try:
+        for future in as_completed(future_to_idx, timeout=_GRAPH_TOTAL_BUDGET):
+            idx = future_to_idx[future]
+            try:
+                gd = future.result()
+                all_graph_documents.extend(gd)
+                graph_conn.add_graph_documents(gd)
+                processed += 1
+                logger.info("文档 %d/%d 完成，提取 %d 个图文档", idx, len(txt_documents), len(gd))
+            except Exception as e:
+                processed += 1
+                logger.warning("文档 %d 处理失败: %s，跳过", idx, str(e)[:100])
+    except FutureTimeout:
+        remaining = len(txt_documents) - processed
+        logger.warning("图索引构建超过总时间预算 %ds，取消剩余 %d 个任务", _GRAPH_TOTAL_BUDGET, remaining)
+        for f in future_to_idx:
+            f.cancel()
+    finally:
+        executor.shutdown(wait=False, cancel_futures=True)
+
+    total_elapsed = time.time() - total_start
+    logger.info("图索引构建完成！图文档数: %d (总耗时 %.1fs)", len(all_graph_documents), total_elapsed)
     return all_graph_documents
 
 

@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from app.state import AgentState
+from app.state import AgentState, trim_history
 from app.agents import db_agent, code_agent
 from app.rag import get_cypher_chain, get_vectorstore
 from app.config import llm, graph_llm
@@ -114,11 +114,17 @@ def vec_kg_node(state: AgentState):
 def chat_node(state: AgentState):
     logger.info("[Worker: chat] 正在生成自然语言回复...")
 
-    # 检查是否有数据源 Worker 的输出（区分融合场景 vs 普通对话）
+    # 只看当前轮次（最近一条用户提问之后）是否有数据源 Worker 输出，
+    # 避免多轮对话中上一轮的数据消息导致误用融合 prompt
     _DATA_WORKERS = {"sqler", "graph_kg", "vec_kg"}
+    current_turn_msgs = []
+    for msg in reversed(state["messages"]):
+        current_turn_msgs.append(msg)
+        if isinstance(msg, HumanMessage) and getattr(msg, "name", None) is None:
+            break  # 到达本轮用户提问
     data_sources_present = any(
         getattr(msg, "name", None) in _DATA_WORKERS
-        for msg in state["messages"]
+        for msg in current_turn_msgs
     )
 
     if data_sources_present:
@@ -144,6 +150,7 @@ def chat_node(state: AgentState):
             "如果没有足够的信息，请坦诚告知。使用中文回答。"
         )
 
-    messages = [SystemMessage(content=system_prompt)] + list(state["messages"])
+    # 滑动窗口裁剪：与 Supervisor 共用同一窗口策略，防止多轮历史 token 溢出
+    messages = [SystemMessage(content=system_prompt)] + trim_history(list(state["messages"]))
     model_response = llm.invoke(messages)
     return {"messages": [HumanMessage(content=model_response.content, name="chat")]}

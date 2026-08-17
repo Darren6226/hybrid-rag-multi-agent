@@ -7,7 +7,7 @@ import logging
 from typing import Literal
 from typing_extensions import TypedDict
 from langgraph.graph import END
-from app.state import AgentState
+from app.state import AgentState, trim_history
 from app.config import supervisor_llm
 from app.routing_policy import create_default_policy, RoutingPolicyManager
 from langchain_core.messages import HumanMessage
@@ -85,13 +85,16 @@ def supervisor(state: AgentState):
     结合 LLM 智能决策和策略管理器的循环检测
     """
     # 1. 识别已调用的代理
+    #    只统计当前轮次（最近一条用户提问之后）的 worker 调用。
+    #    多轮对话下若回溯进历史轮次，called_workers 会被上一轮污染，
+    #    导致兜底A（"≥2个数据源已尝试"）误触发、sqler 等代理失去被调度机会。
     last_worker = None
     called_workers = set()
 
-    # 逆序遍历找到当前问题轮次中所有参与过的 worker
     for msg in reversed(state["messages"]):
-        if isinstance(msg, HumanMessage) and not hasattr(msg, 'name'):
-            break
+        # name 是 Pydantic 字段恒存在，须用 is None 判断（不能用 not hasattr）
+        if isinstance(msg, HumanMessage) and getattr(msg, "name", None) is None:
+            break  # 到达本轮用户提问，停止回溯
         name = getattr(msg, "name", None)
         if name in members:
             if last_worker is None:
@@ -145,7 +148,9 @@ def supervisor(state: AgentState):
                 error_summary += f"- {worker}: {errors[-1][:100]}...\n"
         system_prompt += error_summary
 
-    messages = [{"role": "system", "content": system_prompt}] + state["messages"]
+    # 滑动窗口：多轮历史过长时裁剪，只保留最近 MAX_HISTORY_MESSAGES 条，
+    # 防止上下文 token 溢出（当前轮次用户提问 + worker 输出始终在窗口内）
+    messages = [{"role": "system", "content": system_prompt}] + trim_history(state["messages"])
     # 使用 supervisor_llm（支持 JSON 模式）
     response = supervisor_llm.with_structured_output(Router).invoke(messages)
     next_ = response["next"]
