@@ -159,6 +159,15 @@ supervisor_llm = ChatOpenAI(
     request_timeout=120
 )
 
+# 摘要压缩专用 LLM（用 qwen-turbo，快且便宜，摘要任务不需要强推理能力）
+summary_llm = ChatOpenAI(
+    temperature=0,
+    model="qwen-turbo",
+    api_key=DASHSCOPE_API_KEY,
+    base_url=DASHSCOPE_API_BASE,
+    request_timeout=30
+)
+
 # 使用 DashScope 的 Embedding 服务（不传 base_url，避免使用 ModelScope）
 embeddings = DashScopeEmbeddings(
     model="tongyi-embedding-vision-flash-2026-03-06",

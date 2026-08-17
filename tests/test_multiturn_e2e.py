@@ -10,11 +10,12 @@ Mock 组件: supervisor LLM 决策(脚本化路由序列) + 各 Worker 节点函
 3. called_workers 轮次隔离 —— 上一轮的数据源"无数据"不应触发本轮兜底A
 4. thread_id 会话隔离 —— 不同 thread 互不可见
 5. reset_supervisor —— 路由状态(轮次计数)按轮重置，不跨轮累积
+6. 摘要压缩 —— 6轮对话后触发摘要，旧消息被 RemoveMessage 删除，近期完整保留
 """
 
 import pytest
-from unittest.mock import patch
-from langchain_core.messages import HumanMessage
+from unittest.mock import patch, MagicMock
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.graph_builder import build_graph
 from app.supervisor import reset_supervisor, policy_manager
@@ -265,6 +266,80 @@ class TestSupervisorStateReset:
 
                 graph.invoke({"messages": "第二轮问题"}, config)
                 assert policy_manager.state.total_turns == 3  # 第二轮重新计数
+            finally:
+                for p in patches:
+                    p.stop()
+
+
+# ============================================================
+# 场景 6: 摘要压缩（近期完整 + 远期摘要）
+# ============================================================
+
+class TestSummaryCompression:
+    """测试摘要压缩在真实 LangGraph 图中的端到端行为"""
+
+    def test_summary_triggered_after_6_turns(self):
+        """
+        6轮对话后触发摘要压缩：
+        - 每轮 vec_kg→chat→FINISH = 3条消息
+        - 5轮 = 15条（==阈值不触发）
+        - 第6轮首条消息时 = 16条 > 15 → 触发摘要
+        - 摘要最早6条（第1-2轮），RemoveMessage从checkpoint删除
+        - 最终: 1摘要 + 4轮×3 = 13条（而非18条）
+        """
+        routes_per_turn = [["vec_kg", "chat", "FINISH"]] * 6
+        all_routes = [r for turn_routes in routes_per_turn for r in turn_routes]
+        router = ScriptedRouter(all_routes)
+
+        # Mock summary_llm：记录调用并返回固定摘要
+        summary_resp = MagicMock()
+        summary_resp.content = "用户问了小米技术和销售额，Agent返回了相关结果"
+        summary_invoke_count = [0]
+
+        def mock_summary_invoke(prompt):
+            summary_invoke_count[0] += 1
+            return summary_resp
+
+        mock_summary_llm = MagicMock()
+        mock_summary_llm.invoke = mock_summary_invoke
+
+        patches = patch_workers()
+        with patch("app.supervisor.supervisor_llm", router), \
+             patch("app.supervisor.summary_llm", mock_summary_llm):
+            for p in patches:
+                p.start()
+            try:
+                graph = build_graph(use_checkpointer=True)
+                config = {"configurable": {"thread_id": "sum-test"}}
+
+                for t in range(6):
+                    reset_supervisor()
+                    graph.invoke({"messages": f"第{t}轮问题"}, config)
+
+                msgs = get_thread_messages(graph, "sum-test")
+                contents = [m.content for m in msgs]
+
+                # 1. 摘要 LLM 被调用1次（第6轮首次supervisor时触发）
+                assert summary_invoke_count[0] == 1
+
+                # 2. checkpoint 包含摘要 SystemMessage
+                summary_msgs = [
+                    m for m in msgs
+                    if isinstance(m, SystemMessage) and "对话历史摘要" in m.content
+                ]
+                assert len(summary_msgs) == 1
+                assert "小米" in summary_msgs[0].content
+
+                # 3. 消息总数 < 18（未压缩应为6轮×3=18条）
+                assert len(msgs) < 18
+
+                # 4. 旧消息被删除（第1-2轮用户问题不在checkpoint中）
+                assert "第0轮问题" not in contents
+                assert "第1轮问题" not in contents
+
+                # 5. 近期消息完整保留（第3-6轮用户问题在checkpoint中）
+                for t in range(2, 6):
+                    assert f"第{t}轮问题" in contents
             finally:
                 for p in patches:
                     p.stop()

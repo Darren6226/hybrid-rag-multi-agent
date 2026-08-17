@@ -7,8 +7,8 @@ import logging
 from typing import Literal
 from typing_extensions import TypedDict
 from langgraph.graph import END
-from app.state import AgentState, trim_history
-from app.config import supervisor_llm
+from app.state import AgentState, trim_history, summarize_and_trim
+from app.config import supervisor_llm, summary_llm
 from app.routing_policy import create_default_policy, RoutingPolicyManager
 from langchain_core.messages import HumanMessage
 
@@ -148,9 +148,11 @@ def supervisor(state: AgentState):
                 error_summary += f"- {worker}: {errors[-1][:100]}...\n"
         system_prompt += error_summary
 
-    # 滑动窗口：多轮历史过长时裁剪，只保留最近 MAX_HISTORY_MESSAGES 条，
-    # 防止上下文 token 溢出（当前轮次用户提问 + worker 输出始终在窗口内）
-    messages = [{"role": "system", "content": system_prompt}] + trim_history(state["messages"])
+    # 近期完整 + 远期摘要：超过阈值时压缩旧消息，近期保持完整
+    # state_updates 非 None 时包含 RemoveMessage + 摘要 SystemMessage，
+    # 返回后由 add_messages reducer 更新 checkpoint（删除旧消息 + 插入摘要）
+    effective_messages, state_updates = summarize_and_trim(state["messages"], summary_llm)
+    messages = [{"role": "system", "content": system_prompt}] + effective_messages
     # 使用 supervisor_llm（支持 JSON 模式）
     response = supervisor_llm.with_structured_output(Router).invoke(messages)
     next_ = response["next"]
@@ -213,4 +215,7 @@ def supervisor(state: AgentState):
     if next_ == "FINISH":
         next_ = END
 
-    return {"next": next_}
+    result = {"next": next_}
+    if state_updates:
+        result["messages"] = state_updates
+    return result
