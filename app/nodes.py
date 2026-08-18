@@ -4,10 +4,10 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from app.state import AgentState, trim_history
+from app.state import AgentState, summarize_and_trim
 from app.agents import db_agent, code_agent
 from app.rag import get_cypher_chain, get_vectorstore
-from app.config import llm, graph_llm
+from app.config import llm, graph_llm, summary_llm
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,16 @@ def chat_node(state: AgentState):
             "如果没有足够的信息，请坦诚告知。使用中文回答。"
         )
 
-    # 滑动窗口裁剪：与 Supervisor 共用同一窗口策略，防止多轮历史 token 溢出
-    messages = [SystemMessage(content=system_prompt)] + trim_history(list(state["messages"]))
+    # 统一记忆策略：与 Supervisor 共用 summarize_and_trim（近期完整 + 远期摘要）。
+    # 多数情况下 supervisor 已把摘要写入 checkpoint，chat 读到 ≤阈值 的消息，
+    # summarize_and_trim 直接原样返回，不产生额外 LLM 调用；仅作为一致性兜底。
+    effective_messages, state_updates = summarize_and_trim(list(state["messages"]), summary_llm)
+    messages = [SystemMessage(content=system_prompt)] + effective_messages
     model_response = llm.invoke(messages)
-    return {"messages": [HumanMessage(content=model_response.content, name="chat")]}
+
+    result = {"messages": [HumanMessage(content=model_response.content, name="chat")]}
+    # 若 chat 侧恰好触发摘要（极端时序下 supervisor 未处理），一并写回，
+    # 确保 RemoveMessage 真正删除被压缩的旧消息，与 supervisor 行为一致。
+    if state_updates:
+        result["messages"] = list(result["messages"]) + state_updates
+    return result

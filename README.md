@@ -5,7 +5,7 @@
 ## 核心亮点
 
 - **多智能体调度架构**：Supervisor 双层路由——LLM 结构化输出（JSON Schema）做初步决策，`RoutingPolicyManager` 策略层二次校验，通过循环检测、EMA 成功率追踪、错误关键词识别和自动退避机制防止 Agent 死循环与重复调度，**路由准确率达 96%**
-- **多轮对话记忆**：基于 LangGraph MemorySaver（thread_id 绑定 session_id）实现跨轮次上下文延续；近期完整 + 远期摘要压缩——消息数超过阈值（15条）时，通过 RemoveMessage 将最早的 N 条压缩为 LLM 生成摘要 SystemMessage，近期消息保持完整，Supervisor 路由状态每轮重置避免跨轮污染；硬截断兜底（MAX_HISTORY_MESSAGES=12）防止极端情况 token 溢出
+- **多轮对话记忆**：基于 LangGraph MemorySaver（thread_id 绑定 session_id）实现跨轮次上下文延续；近期完整 + 远期摘要压缩——消息数超过阈值（15条）时，通过 RemoveMessage 将最早的 N 条压缩为 LLM 生成摘要 SystemMessage，近期消息保持完整，Supervisor 与聊天节点共用同一摘要策略（避免裁剪边界不一致），路由状态每轮重置避免跨轮污染；硬截断兜底（MAX_HISTORY_MESSAGES=12）防止极端情况 token 溢出
 - **异构数据融合**：打通 MySQL（交易/客户/产品/竞品数据）、Neo4j（企业股权/供应链/技术图谱）、Milvus（文档向量嵌入）三种数据后端，Supervisor 按问题类型动态决定并行或串行调用多个 Agent
 - **工程化与安全**：抽象 ReAct Agent 工厂方法统一创建 5 个 Agent、消除重复代码；GraphRAG 并行索引构建（ThreadPoolExecutor + 超时预算兜底）；SQL 执行层做多因素安全校验（SELECT 白名单 + 只读事务 + 危险模式检测 + 长度限制）；Python 执行层基于 RestrictedPython 字节码级沙箱，限制 builtin 函数与白名单模块，隔离文件和网络操作
 - **系统评估体系**：基于 RAGAS 搭建评估管线，5 组对照实验（分块策略 / Top-K / 混合检索 / 重排序消融 / 路由准确率）逐模块量化效果
@@ -19,7 +19,7 @@ LangGraph · LangChain · DashScope（Qwen3.7-max）· MySQL · Neo4j · Milvus 
 
 - 最优配置（语义元数据分块 + 纯向量检索 + qwen3-rerank 重排序）RAGAS 综合得分 **0.9139**，路由准确率 **96%**
 - 重排序使 Context Precision 从 0.7687 提升至 0.9064（**+17.9%**）
-- 111 个 pytest 测试覆盖路由策略、工具安全、图索引并行构建与多轮对话摘要压缩（全部 mock，无需 API Key 即可运行）
+- 113 个 pytest 测试覆盖路由策略、工具安全、图索引并行构建、多轮对话摘要压缩及节点记忆策略一致性（全部 mock，无需 API Key 即可运行）
 
 ## 系统架构
 

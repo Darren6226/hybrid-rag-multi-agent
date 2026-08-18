@@ -5,7 +5,7 @@
 """
 
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from langchain_core.messages import HumanMessage, SystemMessage, RemoveMessage
 
 from app.state import (
@@ -211,3 +211,97 @@ class TestTrimHistoryFallback:
         result = trim_history(msgs)
         assert len(result) == MAX_HISTORY_MESSAGES
         assert result[0].content == msgs[-MAX_HISTORY_MESSAGES].content
+
+
+# ============================================================
+# chat 节点记忆策略一致性（问题①修复）
+# ============================================================
+
+class TestChatNodeMemoryOverride:
+    """验证 chat_node 与 Supervisor 采用统一摘要策略，不再用旧的 trim_history 硬截断"""
+
+    def _run_chat(self, state_messages, llm, summary_llm):
+        """真实运行 chat_node，mock 其依赖的 LLM"""
+        from app.nodes import chat_node
+        with patch("app.nodes.llm", llm), patch("app.nodes.summary_llm", summary_llm):
+            return chat_node(state_messages)
+
+    def _make_state(self, messages):
+        return {"messages": messages}
+
+    def test_chat_receives_summary_instead_of_hard_truncation(self):
+        """
+        消息超阈值时，chat 节点接收到的应是摘要 SystemMessage + 近期完整，
+        而不是旧的 trim_history(12) 硬截断丢开头。
+        """
+        # 18 条消息：6 条旧 worker + 1 条用户消息 + 11 条近期 worker
+        msgs = []
+        for i in range(6):
+            msgs.append(_make_worker(f"旧数据{i}", "sqler" if i % 2 == 0 else "vec_kg", f"old{i}"))
+        msgs.append(_make_user("当前问题", "cur_user"))
+        for i in range(11):
+            msgs.append(_make_worker(f"近期数据{i}", "vec_kg", f"recent{i}"))
+
+        # mock chat 推理 LLM：捕获输入
+        chat_resp = MagicMock()
+        chat_resp.content = "chat 回答"
+        mock_llm = MagicMock()
+        mock_llm.invoke = MagicMock(return_value=chat_resp)
+
+        # mock 摘要 LLM
+        summary_resp = MagicMock()
+        summary_resp.content = "远期摘要文本"
+        mock_summary = MagicMock()
+        mock_summary.invoke = MagicMock(return_value=summary_resp)
+
+        state = self._make_state(msgs)
+        result = self._run_chat(state, mock_llm, mock_summary)
+
+        # 1. chat 推理 LLM 被调用，输入含摘要 SystemMessage
+        sent_messages = mock_llm.invoke.call_args[0][0]
+        system_prompt = sent_messages[0]  # 第一个是 chat 的 system_prompt SystemMessage
+        post_system = sent_messages[1:]   # 之后是 effective_messages
+
+        # 第一位是摘要 SystemMessage 而非旧消息
+        assert isinstance(post_system[0], SystemMessage)
+        assert "远期摘要文本" in post_system[0].content
+
+        # 2. 旧消息(前6条)不在 chat 输入中（未被 trim_history 丢弃而是被摘要替换）
+        all_contents = [m.content for m in post_system]
+        assert not any("旧数据" in c for c in all_contents)
+
+        # 3. 近期消息完整保留（含当前用户问题）
+        assert "当前问题" in all_contents
+        assert "近期数据10" in all_contents
+
+        # 4. 摘要 LLM 被调用一次
+        assert mock_summary.invoke.call_count == 1
+
+        # 5. 返回消息 = chat 回复 + RemoveMessage + 摘要 SystemMessage
+        returned = result["messages"]
+        assert returned[0].content == "chat 回答"
+        remove_msgs = [m for m in returned if isinstance(m, RemoveMessage)]
+        assert len(remove_msgs) == 6
+
+    def test_chat_below_threshold_uses_messages_unchanged(self):
+        """消息未超阈值时，chat 直接使用原始消息，不触发摘要 LLM"""
+        msgs = _build_conversation(4)  # 12 条 ≤ 15
+
+        chat_resp = MagicMock()
+        chat_resp.content = "chat 回答"
+        mock_llm = MagicMock()
+        mock_llm.invoke = MagicMock(return_value=chat_resp)
+
+        mock_summary = MagicMock()
+        mock_summary.invoke = MagicMock(return_value=MagicMock())
+
+        state = self._make_state(msgs)
+        result = self._run_chat(state, mock_llm, mock_summary)
+
+        # 摘要 LLM 未被调用
+        mock_summary.invoke.assert_not_called()
+        # chat 输入包含全部原始消息
+        sent_messages = mock_llm.invoke.call_args[0][0]
+        assert len(sent_messages) == 1 + 12  # system + 12条
+        # 返回不含 RemoveMessage
+        assert not any(isinstance(m, RemoveMessage) for m in result["messages"])
